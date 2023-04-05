@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Title of the work",
+    "section": "",
+    "text": "Abstract. This is a suggested formatting for your abstract. This quarto document is a template for your report. It includes some basic ways of working with such documents. You are invited to learn more about developing online reports with this technology.\nKeywords. bsvars, impulse responses, quarto, R, tax shocks"
+  },
+  {
+    "objectID": "index.html#a-simple-example",
+    "href": "index.html#a-simple-example",
+    "title": "Title of the work",
+    "section": "A Simple Example",
+    "text": "A Simple Example\nThis is a Quarto document in which we can cite the bsvars package by Woźniak (2022). Look for more info at package CRAN website.\necho: true ``` ## References {.unnumbered}"
+  }
+]
