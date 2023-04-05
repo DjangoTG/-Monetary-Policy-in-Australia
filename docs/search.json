@@ -2,15 +2,15 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Title of the work",
+    "title": "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
     "section": "",
-    "text": "Abstract. This is a suggested formatting for your abstract. This quarto document is a template for your report. It includes some basic ways of working with such documents. You are invited to learn more about developing online reports with this technology.\nKeywords. bsvars, impulse responses, quarto, R, tax shocks"
+    "text": "Abstract. Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in fiscal policy impact income inequality in Australia using a Structural Vector Autoregression (SVAR) approach."
   },
   {
-    "objectID": "index.html#a-simple-example",
-    "href": "index.html#a-simple-example",
-    "title": "Title of the work",
-    "section": "A Simple Example",
-    "text": "A Simple Example\nThis is a Quarto document in which we can cite the bsvars package by Woźniak (2022). Look for more info at package CRAN website.\necho: true ``` ## References {.unnumbered}"
+    "objectID": "index.html#references",
+    "href": "index.html#references",
+    "title": "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
+    "section": "References",
+    "text": "References"
   }
 ]

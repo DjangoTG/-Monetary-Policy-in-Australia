@@ -1,6 +1,6 @@
 ---
-title: "Title of the work"
-author: "Your Name"
+title: "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis"
+author: "Django Trueman-Greinke"
 
 execute:
   echo: false
@@ -8,18 +8,83 @@ execute:
 bibliography: references.bib
 ---
 
-> **Abstract.** This is a suggested formatting for your abstract. This **quarto** document is a template for your report. It includes some basic ways of working with such documents. You are invited to learn more about developing online reports with this technology. 
->
-> **Keywords.** bsvars, impulse responses, quarto, R, tax shocks
+> **Abstract.** Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in fiscal policy impact income inequality in Australia using a Structural Vector Autoregression (SVAR) approach.
+
+> **Keywords.** Fiscal policy, income inequality, impluse response function, structural vector autoregressions, Australia, Gini coefficient
 
 # Introduction
 
-This is a template repository for the Research Report for **Macroeconometrics**. Learn more about about developing online reports with **quarto** at [quarto.org](https://quarto.org/).
+High levels of income inequality can lead to social and economic instability and well as limiting development. With the increasing exposure to the level's income inequality has reached in Australia and worldwide, people are no longer happy to watch as the top 1% take in almost two-thirds of all new wealth.
 
-## A Simple Example
+Using an SVAR model, this paper examines the dynamic relationships between fiscal policy, such as government spending and taxation,  and income inequality, measured by the Gini coefficient.  
 
-This is a Quarto document in which we can cite the **bsvars** package by @wozniakBsvarsBayesianEstimation2022. Look for more info at [package CRAN website](https://cran.r-project.org/package=bsvars).
 
-  echo: true
+# Data
+``` {r Data}
+#| echo: false
+#| message: false
+#| warning: false
+
+gdp <- readabs::read_abs(series_id = "A2304418T") 
+gdp_temp <- xts::xts(gdp$value, gdp$date) 
+
+spend <- readabs::read_abs(series_id = "A2304036K") 
+spend_temp  <- xts::xts(spend$value, spend$date)
+
+revenue <- readabs::read_abs(series_id = "A2302411R") 
+revenue_temp <- xts::xts(revenue$value, revenue$date)
+
+debt <- readabs::read_abs(series_id = "A3424499W") 
+debt_temp <- xts::xts(debt$value, debt$date)
+
+Y <- as.data.frame(
+  merge(gdp_temp, revenue_temp, spend_temp, debt_temp)
+  )
+
+Y<- na.omit(Y)[6:139,]
+
+colnames(Y) <- c("GDP /$Millions",  "Revenue /$Millions", "Spend /$Millions", "Debt /$Millions")
+
 ```
+The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. 
+They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.
+
+Below are plots of each of the available variables over time.
+
+``` {r plots}
+
+dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
+plot(dates, y=Y[,1], ylab = "GDP /$Millions", xlab = "Date")
+plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date")
+plot(dates, y=Y[,3], ylab = "Government Speding /$Millions", xlab = "Date")
+plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date")
+```
+
+
+# Methodology
+
+Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
+
+\begin{align}
+B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
+\end{align}
+\begin{align}
+u_t|Y_{t-1}~iid(0_N,I_N)
+\end{align}
+
+Where:
+
+
+$Y_{t}$ is an $N\times 1$ vector of endogenous variables, including the Gini coefficient, government spending, revenue, GDP, and debt.
+
+$B_0$ is an $N \times N$ structural matrix capturing comtemporaneous relationships between variables.
+
+$u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on $Y_{t-1}$.
+
+Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
+
+Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
+
+
+
 ## References {.unnumbered}
