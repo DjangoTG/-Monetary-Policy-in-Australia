@@ -67,7 +67,11 @@ plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date")
 acf(Y$`GDP /$Millions`)
 pacf(Y$`GDP /$Millions`)
 ```
+## Data transformation
 
+```{r}
+Y$log_gdp = log(Y$`GDP /$Millions`)
+```
 # Methodology
 
 Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
@@ -91,7 +95,6 @@ $u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on 
 Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
 
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
-
 
 
 ## References {.unnumbered}
