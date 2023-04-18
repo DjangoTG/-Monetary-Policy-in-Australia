@@ -61,6 +61,12 @@ plot(dates, y=Y[,3], ylab = "Government Speding /$Millions", xlab = "Date")
 plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date")
 ```
 
+# Preliminary Results
+## ACF PACF plots
+```{r}
+acf(Y$`GDP /$Millions`)
+pacf(Y$`GDP /$Millions`)
+```
 
 # Methodology
 
