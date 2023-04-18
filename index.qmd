@@ -1,5 +1,5 @@
 ---
-title: "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis"
+title: "Examing the Relationship between Fiscal Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis"
 author: "Django Trueman-Greinke"
 
 execute:
