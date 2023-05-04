@@ -26,16 +26,16 @@ Using an SVAR model, this paper examines the dynamic relationships between fisca
 #| warning: false
 
 gdp <- readabs::read_abs(series_id = "A2304418T") 
-gdp_temp <- xts::xts(gdp$value, gdp$date) 
+gdp_temp <- xts::xts(log(gdp$value), gdp$date) 
 
 spend <- readabs::read_abs(series_id = "A2304036K") 
-spend_temp  <- xts::xts(spend$value, spend$date)
+spend_temp  <- xts::xts(log(spend$value), spend$date)
 
 revenue <- readabs::read_abs(series_id = "A2302411R") 
-revenue_temp <- xts::xts(revenue$value, revenue$date)
+revenue_temp <- xts::xts(log(revenue$value), revenue$date)
 
 debt <- readabs::read_abs(series_id = "A3424499W") 
-debt_temp <- xts::xts(debt$value, debt$date)
+debt_temp <- xts::xts(log(debt$value), debt$date)
 
 Y <- as.data.frame(
   merge(gdp_temp, revenue_temp, spend_temp, debt_temp)
@@ -69,11 +69,7 @@ acf(Y[,2])
 acf(Y[,3])
 acf(Y[,4])
 ```
-## Data transformation
 
-```{r}
-Y$log_gdp = log(Y$`GDP /$Millions`)
-```
 # Methodology
 
 Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
