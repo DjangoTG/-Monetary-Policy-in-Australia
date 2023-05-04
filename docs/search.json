@@ -2,14 +2,21 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examing the Relationship between Fiscal Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
     "section": "",
     "text": "Abstract. Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in fiscal policy impact income inequality in Australia using a Structural Vector Autoregression (SVAR) approach."
   },
   {
+    "objectID": "index.html#acf-pacf-plots",
+    "href": "index.html#acf-pacf-plots",
+    "title": "Examing the Relationship between Fiscal Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
+    "section": "ACF PACF plots",
+    "text": "ACF PACF plots"
+  },
+  {
     "objectID": "index.html#references",
     "href": "index.html#references",
-    "title": "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examing the Relationship between Fiscal Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis",
     "section": "References",
     "text": "References"
   }
