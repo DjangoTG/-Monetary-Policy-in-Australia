@@ -56,9 +56,8 @@ Below are plots of each of the available variables over time.
 dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
 plot(dates, y=Y[,1], ylab = "GDP /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
 
-plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date")
-plot(dates, y=Y[,3], ylab = "Government Speding /$Millions", xlab = "Date")
-plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date")
+plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2),type = "l",col = "blue",lwd = 2)
+plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
 ```
 
 # Preliminary Results
