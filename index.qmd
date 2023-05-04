@@ -64,8 +64,10 @@ plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date")
 # Preliminary Results
 ## ACF PACF plots
 ```{r}
-acf(Y$`GDP /$Millions`)
-pacf(Y$`GDP /$Millions`)
+acf(Y[,1])
+acf(Y[,2])
+acf(Y[,3])
+acf(Y[,4])
 ```
 ## Data transformation
 
