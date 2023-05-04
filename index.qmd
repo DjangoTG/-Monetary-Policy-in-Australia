@@ -1,5 +1,5 @@
 ---
-title: "Examing the Relationship between Monetary Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis"
+title: "Examing the Relationship between Fiscal Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis"
 author: "Django Trueman-Greinke"
 
 execute:
@@ -26,16 +26,16 @@ Using an SVAR model, this paper examines the dynamic relationships between fisca
 #| warning: false
 
 gdp <- readabs::read_abs(series_id = "A2304418T") 
-gdp_temp <- xts::xts(gdp$value, gdp$date) 
+gdp_temp <- xts::xts(log(gdp$value), gdp$date) 
 
 spend <- readabs::read_abs(series_id = "A2304036K") 
-spend_temp  <- xts::xts(spend$value, spend$date)
+spend_temp  <- xts::xts(log(spend$value), spend$date)
 
 revenue <- readabs::read_abs(series_id = "A2302411R") 
-revenue_temp <- xts::xts(revenue$value, revenue$date)
+revenue_temp <- xts::xts(log(revenue$value), revenue$date)
 
 debt <- readabs::read_abs(series_id = "A3424499W") 
-debt_temp <- xts::xts(debt$value, debt$date)
+debt_temp <- xts::xts(log(debt$value), debt$date)
 
 Y <- as.data.frame(
   merge(gdp_temp, revenue_temp, spend_temp, debt_temp)
@@ -54,12 +54,20 @@ Below are plots of each of the available variables over time.
 ``` {r plots}
 
 dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
-plot(dates, y=Y[,1], ylab = "GDP /$Millions", xlab = "Date")
-plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date")
-plot(dates, y=Y[,3], ylab = "Government Speding /$Millions", xlab = "Date")
-plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date")
+plot(dates, y=Y[,1], ylab = "GDP /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
+
+plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2),type = "l",col = "blue",lwd = 2)
+plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
 ```
 
+# Preliminary Results
+## ACF PACF plots
+```{r}
+acf(Y[,1])
+acf(Y[,2])
+acf(Y[,3])
+acf(Y[,4])
+```
 
 # Methodology
 
@@ -84,7 +92,6 @@ $u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on 
 Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
 
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
-
 
 
 ## References {.unnumbered}
