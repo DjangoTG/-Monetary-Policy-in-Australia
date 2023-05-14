@@ -69,6 +69,18 @@ acf(Y[,3])
 acf(Y[,4])
 ```
 
+
+## Integration order verification
+
+```{r integration order}
+
+adf = tseries::adf.test(Y[,1], k = 4)
+diff_adf = tseries::adf.test(diff(Y[,1]), k = 3)
+# please use the outputs to create a table reporting test statistic, p-value, the variable (and transformation), lag order. Write a conclusion regarding the integration order.
+```
+
+
+
 # Methodology
 
 Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
