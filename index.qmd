@@ -60,7 +60,7 @@ plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date",type 
 plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
 ```
 
-# Preliminary Results
+# Preliminary Data Analysis
 ## ACF PACF plots
 ```{r}
 acf(Y[,1])
