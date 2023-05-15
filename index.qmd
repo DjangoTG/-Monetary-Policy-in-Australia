@@ -90,6 +90,9 @@ The data required can all be taken directly from the Australian Bureau of Statis
 Below are plots of each of the available variables over time.
 
 ```{r plots}
+#| echo: false
+#| message: false
+#| warning: false
 
 dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
 
@@ -123,33 +126,39 @@ pacf(Y[,i], main = paste(names[i]))
 ##Integration order verification
 
 ```{r Integration}
+#| echo: false
+#| message: false
+#| warning: false
 
-results.adf0 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
+results.adf0 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
 for (i in 1:10){
 adf = tseries::adf.test(Y[,i], k = 4)
 results.adf0[i,1] <- paste(names[i])
-results.adf0[i,2] <- adf$statistic
-results.adf0[i,3] <- adf$p.value
+results.adf0[i,2] <- adf[2]
+results.adf0[i,3] <- adf[1]
+results.adf0[i,4] <- adf[4]
 
 }
 
-results.adf1 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
+results.adf1 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
 for (i in 1:10){
-  if (is.na(results.adf0[i, 3]) |results.adf0[i,3]>0.05){
+  if (is.na(results.adf0[i, 3]) |results.adf0[i,4]>0.05){
 diff_adf = tseries::adf.test(diff(Y[,i]), k = 3)
 results.adf1[i,1] <- paste(names[i])
-results.adf1[i,2] <- diff_adf$statistic
-results.adf1[i,3] <- diff_adf$p.value
+results.adf1[i,2] <- diff_adf[2]
+results.adf1[i,3] <- diff_adf[1]
+results.adf1[i,4] <- diff_adf[4]
 }
 }
 
-results.adf2 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
+results.adf2 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
 for (i in 1:10){
-  if (is.na(results.adf1[i, 3]) |results.adf1[i,3]>0.05){
+  if (is.na(results.adf1[i, 4]) |results.adf1[i,3]>0.05){
 diff_adf = tseries::adf.test(diff(diff(Y[,i])), k = 3)
 results.adf2[i,1] <- paste(names[i])
-results.adf2[i,2] <- diff_adf$statistic
-results.adf2[i,3] <- diff_adf$p.value
+results.adf2[i,2] <- diff_adf[2]
+results.adf2[i,3] <- diff_adf[1]
+results.adf2[i,4] <- diff_adf[4]
 }
 }
 

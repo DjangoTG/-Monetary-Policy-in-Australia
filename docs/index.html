@@ -177,84 +177,39 @@ ul.task-list li input[type="checkbox"] {
 </div>
 <p>##Integration order verification</p>
 <div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>Registered S3 method overwritten by 'quantmod':
-  method            from
-  as.zoo.data.frame zoo </code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in tseries::adf.test(Y[, i], k = 4): p-value smaller than printed p-
-value
-
-Warning in tseries::adf.test(Y[, i], k = 4): p-value smaller than printed p-
-value</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed
-p-value
-
-Warning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed
-p-value
-
-Warning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed
-p-value
-
-Warning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed
-p-value
-
-Warning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed
-p-value
-
-Warning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed
-p-value</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in tseries::adf.test(diff(diff(Y[, i])), k = 3): p-value smaller than
-printed p-value
-
-Warning in tseries::adf.test(diff(diff(Y[, i])), k = 3): p-value smaller than
-printed p-value
-
-Warning in tseries::adf.test(diff(diff(Y[, i])), k = 3): p-value smaller than
-printed p-value
-
-Warning in tseries::adf.test(diff(diff(Y[, i])), k = 3): p-value smaller than
-printed p-value</code></pre>
+<div class="cell-output cell-output-stdout">
+<pre><code>                               Variable Lag.Order ADF.Statistic   p.value
+1                              Real GDP         4     -4.101261 0.0100000
+2                  Consumer Price Index         4     -1.227300 0.8978238
+3                    GDP Price Deflator         4     -1.229906 0.8967400
+4                 Commodity Price Index         4     -1.421895 0.8169025
+5                      Cash Rate Target         4     -4.867360 0.0100000
+6                          Money Supply         4     -1.083142 0.9218481
+7         Unemployment Rate: Queensland         4     -1.863189 0.6333935
+8    Unemployment Rate: New South Wales         4     -2.828556 0.2319516
+9           Unemployment Rate: Victoria         4     -2.127751 0.5233770
+10 Unemployment Rate: Western Australia         4     -2.034770 0.5620423</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                               Variable ADF_Statistic   p_value
-1                              Real GDP     -4.101261 0.0100000
-2                  Consumer Price Index     -1.227300 0.8978238
-3                    GDP Price Deflator     -1.229906 0.8967400
-4                 Commodity Price Index     -1.421895 0.8169025
-5                      Cash Rate Target     -4.867360 0.0100000
-6                          Money Supply     -1.083142 0.9218481
-7         Unemployment Rate: Queensland     -1.863189 0.6333935
-8    Unemployment Rate: New South Wales     -2.828556 0.2319516
-9           Unemployment Rate: Victoria     -2.127751 0.5233770
-10 Unemployment Rate: Western Australia     -2.034770 0.5620423</code></pre>
+<pre><code>                               Variable Lag.Order ADF.Statistic    p.value
+1                                  &lt;NA&gt;        NA            NA         NA
+2                  Consumer Price Index         3     -2.753556 0.26317856
+3                    GDP Price Deflator         3     -4.829310 0.01000000
+4                 Commodity Price Index         3     -6.557985 0.01000000
+5                                  &lt;NA&gt;        NA            NA         NA
+6                          Money Supply         3     -3.353431 0.06542824
+7         Unemployment Rate: Queensland         3     -6.545921 0.01000000
+8    Unemployment Rate: New South Wales         3     -5.257979 0.01000000
+9           Unemployment Rate: Victoria         3     -6.576128 0.01000000
+10 Unemployment Rate: Western Australia         3     -6.968956 0.01000000</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                               Variable ADF_Statistic    p_value
-1                                  &lt;NA&gt;            NA         NA
-2                  Consumer Price Index     -2.753556 0.26317856
-3                    GDP Price Deflator     -4.829310 0.01000000
-4                 Commodity Price Index     -6.557985 0.01000000
-5                                  &lt;NA&gt;            NA         NA
-6                          Money Supply     -3.353431 0.06542824
-7         Unemployment Rate: Queensland     -6.545921 0.01000000
-8    Unemployment Rate: New South Wales     -5.257979 0.01000000
-9           Unemployment Rate: Victoria     -6.576128 0.01000000
-10 Unemployment Rate: Western Australia     -6.968956 0.01000000</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>              Variable ADF_Statistic p_value
-1             Real GDP    -14.330921    0.01
-2 Consumer Price Index     -9.836683    0.01
-3                 &lt;NA&gt;            NA      NA
-4                 &lt;NA&gt;            NA      NA
-5     Cash Rate Target     -7.925252    0.01
-6         Money Supply     -5.830017    0.01</code></pre>
+<pre><code>          Variable Lag.Order ADF.Statistic p.value
+1         Real GDP         3    -14.330921    0.01
+2             &lt;NA&gt;        NA            NA      NA
+3             &lt;NA&gt;        NA            NA      NA
+4             &lt;NA&gt;        NA            NA      NA
+5 Cash Rate Target         3     -7.925252    0.01</code></pre>
 </div>
 </div>
 </section>
