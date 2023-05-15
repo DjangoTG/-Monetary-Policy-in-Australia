@@ -1,5 +1,5 @@
 ---
-title: "Examing the Relationship between Fiscal Policy and Income Inequality in Australia: A Structural Vector Autoregression Analysis"
+title: "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis"
 author: "Django Trueman-Greinke"
 
 execute:
@@ -8,15 +8,14 @@ execute:
 bibliography: references.bib
 ---
 
-> **Abstract.** Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in fiscal policy impact income inequality in Australia using a Structural Vector Autoregression (SVAR) approach.
+> **Abstract.** Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.
 
-> **Keywords.** Fiscal policy, income inequality, impluse response function, structural vector autoregressions, Australia, Gini coefficient
-
+> **Keywords.** Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia
 # Introduction
 
-High levels of income inequality can lead to social and economic instability and well as limiting development. With the increasing exposure to the level's income inequality has reached in Australia and worldwide, people are no longer happy to watch as the top 1% take in almost two-thirds of all new wealth.
+Intro in progress
 
-Using an SVAR model, this paper examines the dynamic relationships between fiscal policy, such as government spending and taxation,  and income inequality, measured by the Gini coefficient.  
+Plots below
 
 
 # Data
@@ -25,25 +24,77 @@ Using an SVAR model, this paper examines the dynamic relationships between fisca
 #| message: false
 #| warning: false
 
-gdp <- readabs::read_abs(series_id = "A2304418T") 
-gdp_temp <- xts::xts(log(gdp$value), gdp$date) 
 
-spend <- readabs::read_abs(series_id = "A2304036K") 
-spend_temp  <- xts::xts(log(spend$value), spend$date)
+##Nominal GDP per capita
+real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
+real.gdp_temp <- xts::xts(real.gdp$value, real.gdp$date)
 
-revenue <- readabs::read_abs(series_id = "A2302411R") 
-revenue_temp <- xts::xts(log(revenue$value), revenue$date)
 
-debt <- readabs::read_abs(series_id = "A3424499W") 
-debt_temp <- xts::xts(log(debt$value), debt$date)
+##GDP Deflator
+gdp.defl <- readabs::read_abs(series_id = "A2303730T") 
+gdp.defl_temp <- xts::xts(gdp.defl$value, gdp.defl$date) 
 
-Y <- as.data.frame(
-  merge(gdp_temp, revenue_temp, spend_temp, debt_temp)
-  )
+##Commodity Price Index
+comm.pi <- readrba::read_rba(series_id = "GRCPAIAD") 
+comm.pi_temp <- xts::xts(comm.pi$value, comm.pi$date)
 
-Y<- na.omit(Y)[6:139,]
+##Cash Rate Target
+crt <- readrba::read_rba(series_id = "FOOIRATCR") 
+crt_temp <- xts::xts(crt$value, crt$date)
 
-colnames(Y) <- c("GDP /$Millions",  "Revenue /$Millions", "Spend /$Millions", "Debt /$Millions")
+##Money Supply
+MS <- readrba::read_rba(series_id = "DMAM1N") 
+MS_temp <- xts::xts(MS$value, MS$date)
+
+##Unemployment Rate
+UER <- readrba::read_rba(series_id = "GLFSURSA") 
+UER_temp <- xts::xts(UER$value, UER$date)
+
+##QLD Unemployment Rate
+
+UER.QLD <- readabs::read_abs(series_id = "A84423284T") 
+UER.QLD_temp <- xts::xts(UER.QLD$value, UER.QLD$date - days(1))
+
+##NSW Unemployment Rate
+
+UER.NSW <- readabs::read_abs(series_id = "A84423270C") 
+UER.NSW_temp <- xts::xts(UER.NSW$value, UER.NSW$date - days(1))
+
+##VIC Unemployment Rate
+
+UER.VIC <- readabs::read_abs(series_id = "A84423350C") 
+UER.VIC_temp <- xts::xts(UER.VIC$value, UER.VIC$date - days(1))
+
+##WA Unemployment Rate
+
+UER.WA <- readabs::read_abs(series_id = "A84423322V") 
+UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
+
+
+
+##Construction of Real GDP per capita
+
+
+
+
+#AORD.d <- read.csv("https://query1.finance.yahoo.com/v7/finance/download/AAPL?period1=631152000&period2=1672444800&interval=1d&events=history&includeAdjustedClose=true")
+#AORD.d$Date <- as.Date(as.character(AORD.d$Date),format="%Y-%m-%d")
+#tmp.aord <- xts::xts(AORD.d$Close, AORD.d$Date) 
+#aord_q <- xts::to.quarterly(tmp.aord,OHLC=FALSE)
+#aord <- as.numeric(aord_q) / gdp.defl_temp[123:length(gdp.defl_temp)]
+
+#l.aord <- log(aord)
+
+##cpi <- read_rba(series="GCPIAGYP")
+##cpi_temp <-  xts::xts(cpi$value, cpi$date)
+
+Y <- as.data.frame(merge(real.gdp_temp, comm.pi_temp, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
+
+names <- c("Real GDP", "Commodity Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+
+Y <- na.omit(Y)[1:132,]
+
+colnames(Y) <- names
 
 ```
 The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. 
@@ -54,19 +105,28 @@ Below are plots of each of the available variables over time.
 ``` {r plots}
 
 dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
-plot(dates, y=Y[,1], ylab = "GDP /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
 
-plot(dates, y=Y[,2], ylab = "Government Revenue /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
-plot(dates, y=Y[,4], ylab = "Government Debt /$Millions", xlab = "Date",type = "l",col = "blue",lwd = 2)
+par(mfrow=c(2,2), mar=c(4,4,4,4))
+
+for (i in 1:8){
+  plot(dates, y=Y[,i], main = paste(names[i]), ylab = "Real GDP/ $ million",xlab = "Date",type = "l",col = "blue",lwd = 2)
+  
+}
+
 ```
 
 # Preliminary Results
-## ACF PACF plots
+## ACF and PACF plots
 ```{r}
-acf(Y[,1])
-acf(Y[,2])
-acf(Y[,3])
-acf(Y[,4])
+
+
+
+par(mfrow=c(2,2), mar=c(4,4,4,4))
+for(i in 1:8){
+  acf(Y[,i], main = paste(names[i]) )
+pacf(Y[,i], main = paste(names[i]))
+}
+
 ```
 
 # Methodology
