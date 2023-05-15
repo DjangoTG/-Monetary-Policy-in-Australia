@@ -117,7 +117,7 @@ for (i in 1:8){
 
 # Preliminary Results
 ## ACF and PACF plots
-```{r}
+```{r (P)ACF plots}
 
 
 
@@ -128,7 +128,40 @@ pacf(Y[,i], main = paste(names[i]))
 }
 
 ```
+##Integration order verification
 
+```{r Integration} 
+
+results.adf0 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
+for (i in 1:8){
+adf = tseries::adf.test(Y[,i], k = 4)
+results.adf0[i,1] <- paste(names[i])
+results.adf0[i,2] <- adf$statistic
+results.adf0[i,3] <- adf$p.value
+
+}
+
+results.adf1 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
+for (i in 1:8){
+  if (is.na(results.adf1[i, 3]) |results.adf0[i,3]>0.05){
+diff_adf = tseries::adf.test(diff(Y[,i]), k = 3)
+results.adf1[i,1] <- paste(names[i])
+results.adf1[i,2] <- diff_adf$statistic
+results.adf1[i,3] <- diff_adf$p.value
+}
+}
+
+results.adf2 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
+for (i in 1:8){
+  if (is.na(results.adf1[i, 3]) |results.adf1[i,3]>0.05){
+diff_adf = tseries::adf.test(diff(diff(Y[,i])), k = 3)
+results.adf2[i,1] <- paste(names[i])
+results.adf2[i,2] <- diff_adf$statistic
+results.adf2[i,3] <- diff_adf$p.value
+}
+}
+
+```
 # Methodology
 
 Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
