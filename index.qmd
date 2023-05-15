@@ -10,16 +10,15 @@ bibliography: references.bib
 
 > **Abstract.** Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.
 
-> **Keywords.** Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia
-# Introduction
+> **Keywords.** Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia \# Introduction
 
 Intro in progress
 
 Plots below
 
-
 # Data
-``` {r Data}
+
+```{r Data}
 #| echo: false
 #| message: false
 #| warning: false
@@ -33,7 +32,7 @@ real.gdp_temp <- xts::xts(real.gdp$value, real.gdp$date)
 
 ##GDP Deflator
 gdp.defl <- readabs::read_abs(series_id = "A2303730T") 
-gdp.defl_temp <- xts::xts(gdp.defl$value, gdp.defl$date) 
+gdp.defl_temp <- xts::xts(gdp.defl$value, ceiling_date(gdp.defl$date, "month")-days(1)) 
 
 ##Commodity Price Index
 comm.pi <- readrba::read_rba(series_id = "GRCPAIAD") 
@@ -46,6 +45,12 @@ crt_temp <- xts::xts(crt$value, crt$date)
 ##Money Supply
 MS <- readrba::read_rba(series_id = "DMAM1N") 
 MS_temp <- xts::xts(MS$value, MS$date)
+
+
+##Consumer Price Index
+CPI <- readrba::read_rba(series_id = "GCPIAG") 
+CPI_temp <- xts::xts(CPI$value, CPI$date)
+
 
 
 ##QLD Unemployment Rate
@@ -70,68 +75,57 @@ UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
 
 
 
-##Construction of Real GDP per capita
+Y <- as.data.frame(merge(real.gdp_temp,CPI_temp, gdp.defl_temp,comm.pi_temp, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
 
-
-
-
-#AORD.d <- read.csv("https://query1.finance.yahoo.com/v7/finance/download/AAPL?period1=631152000&period2=1672444800&interval=1d&events=history&includeAdjustedClose=true")
-#AORD.d$Date <- as.Date(as.character(AORD.d$Date),format="%Y-%m-%d")
-#tmp.aord <- xts::xts(AORD.d$Close, AORD.d$Date) 
-#aord_q <- xts::to.quarterly(tmp.aord,OHLC=FALSE)
-#aord <- as.numeric(aord_q) / gdp.defl_temp[123:length(gdp.defl_temp)]
-
-#l.aord <- log(aord)
-
-##cpi <- read_rba(series="GCPIAGYP")
-##cpi_temp <-  xts::xts(cpi$value, cpi$date)
-
-Y <- as.data.frame(merge(real.gdp_temp, comm.pi_temp, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
-
-names <- c("Real GDP", "Commodity Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+names <- c("Real GDP","Consumer Price Index", "GDP Price Deflator", "Commodity Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
 
 Y <- na.omit(Y)[1:132,]
 
 colnames(Y) <- names
 
 ```
-The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. 
-They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.
+
+The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.
 
 Below are plots of each of the available variables over time.
 
-``` {r plots}
+```{r plots}
 
 dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
 
+units <- c("$ millions","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
+
 par(mfrow=c(2,2), mar=c(4,4,4,4))
 
-for (i in 1:8){
-  plot(dates, y=Y[,i], main = paste(names[i]), ylab = "Real GDP/ $ million",xlab = "Date",type = "l",col = "blue",lwd = 2)
+for (i in 1:10){
+  plot(dates, y=Y[,i], main = paste(names[i]), ylab = paste(units[i]),xlab = "Date",type = "l",col = "blue",lwd = 2)
   
 }
 
 ```
 
 # Preliminary Results
+
 ## ACF and PACF plots
+
 ```{r (P)ACF plots}
 
 
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
-for(i in 1:8){
+for(i in 1:10){
   acf(Y[,i], main = paste(names[i]) )
 pacf(Y[,i], main = paste(names[i]))
 }
 
 ```
+
 ##Integration order verification
 
-```{r Integration} 
+```{r Integration}
 
 results.adf0 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
-for (i in 1:8){
+for (i in 1:10){
 adf = tseries::adf.test(Y[,i], k = 4)
 results.adf0[i,1] <- paste(names[i])
 results.adf0[i,2] <- adf$statistic
@@ -140,8 +134,8 @@ results.adf0[i,3] <- adf$p.value
 }
 
 results.adf1 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
-for (i in 1:8){
-  if (is.na(results.adf1[i, 3]) |results.adf0[i,3]>0.05){
+for (i in 1:10){
+  if (is.na(results.adf0[i, 3]) |results.adf0[i,3]>0.05){
 diff_adf = tseries::adf.test(diff(Y[,i]), k = 3)
 results.adf1[i,1] <- paste(names[i])
 results.adf1[i,2] <- diff_adf$statistic
@@ -150,7 +144,7 @@ results.adf1[i,3] <- diff_adf$p.value
 }
 
 results.adf2 <- data.frame(Variable = character(), ADF_Statistic = numeric(), p_value = numeric())
-for (i in 1:8){
+for (i in 1:10){
   if (is.na(results.adf1[i, 3]) |results.adf1[i,3]>0.05){
 diff_adf = tseries::adf.test(diff(diff(Y[,i])), k = 3)
 results.adf2[i,1] <- paste(names[i])
@@ -163,19 +157,18 @@ print(results.adf0)
 print(results.adf1)
 print(results.adf2)
 ```
+
 # Methodology
 
 Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
 
 \begin{align}
 B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
-\end{align}
-\begin{align}
+\end{align} \begin{align}
 u_t|Y_{t-1}~iid(0_N,I_N)
 \end{align}
 
 Where:
-
 
 $Y_{t}$ is an $N\times 1$ vector of endogenous variables, including the Gini coefficient, government spending, revenue, GDP, and debt.
 
@@ -186,6 +179,5 @@ $u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on 
 Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
 
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
-
 
 ## References {.unnumbered}
