@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "section": "",
+    "text": "Abstract. Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.\nIntro in progress\nPlots below"
+  },
+  {
+    "objectID": "index.html#acf-and-pacf-plots",
+    "href": "index.html#acf-and-pacf-plots",
+    "title": "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "section": "ACF and PACF plots",
+    "text": "ACF and PACF plots\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n##Integration order verification\n\n\nRegistered S3 method overwritten by 'quantmod':\n  method            from\n  as.zoo.data.frame zoo \n\n\nWarning in tseries::adf.test(Y[, i], k = 4): p-value smaller than printed p-\nvalue\n\nWarning in tseries::adf.test(Y[, i], k = 4): p-value smaller than printed p-\nvalue\n\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\nWarning in tseries::adf.test(diff(Y[, i]), k = 3): p-value smaller than printed\np-value\n\n\nWarning in tseries::adf.test(diff(diff(Y[, i])), k = 3): p-value smaller than\nprinted p-value\n\n\n                              Variable ADF_Statistic   p_value\n1                             Real GDP     -4.101261 0.0100000\n2                Commodity Price Index     -1.421895 0.8169025\n3                     Cash Rate Target     -4.867360 0.0100000\n4                         Money Supply     -1.083142 0.9218481\n5        Unemployment Rate: Queensland     -1.863189 0.6333935\n6   Unemployment Rate: New South Wales     -2.828556 0.2319516\n7          Unemployment Rate: Victoria     -2.127751 0.5233770\n8 Unemployment Rate: Western Australia     -2.034770 0.5620423\n\n\n                              Variable ADF_Statistic    p_value\n1                             Real GDP     -8.322610 0.01000000\n2                Commodity Price Index     -6.557985 0.01000000\n3                     Cash Rate Target     -4.372142 0.01000000\n4                         Money Supply     -3.353431 0.06542824\n5        Unemployment Rate: Queensland     -6.545921 0.01000000\n6   Unemployment Rate: New South Wales     -5.257979 0.01000000\n7          Unemployment Rate: Victoria     -6.576128 0.01000000\n8 Unemployment Rate: Western Australia     -6.968956 0.01000000\n\n\n      Variable ADF_Statistic p_value\n1         <NA>            NA      NA\n2         <NA>            NA      NA\n3         <NA>            NA      NA\n4 Money Supply     -5.830017    0.01"
+  },
+  {
+    "objectID": "index.html#references",
+    "href": "index.html#references",
+    "title": "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "section": "References",
+    "text": "References"
+  }
+]

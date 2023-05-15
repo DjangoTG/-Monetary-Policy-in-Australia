@@ -24,6 +24,7 @@ Plots below
 #| message: false
 #| warning: false
 
+library(lubridate)
 
 ##Nominal GDP per capita
 real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
@@ -46,9 +47,6 @@ crt_temp <- xts::xts(crt$value, crt$date)
 MS <- readrba::read_rba(series_id = "DMAM1N") 
 MS_temp <- xts::xts(MS$value, MS$date)
 
-##Unemployment Rate
-UER <- readrba::read_rba(series_id = "GLFSURSA") 
-UER_temp <- xts::xts(UER$value, UER$date)
 
 ##QLD Unemployment Rate
 
@@ -161,6 +159,9 @@ results.adf2[i,3] <- diff_adf$p.value
 }
 }
 
+print(results.adf0)
+print(results.adf1)
+print(results.adf2)
 ```
 # Methodology
 
