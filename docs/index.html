@@ -94,10 +94,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#acf-and-pacf-plots" id="toc-acf-and-pacf-plots" class="nav-link" data-scroll-target="#acf-and-pacf-plots">ACF and PACF plots</a></li>
   </ul></li>
-  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a>
-  <ul class="collapse">
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
   </ul>
 </nav>
     </div>
@@ -149,9 +146,6 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/plots-2.png" class="img-fluid" width="672"></p>
 </div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/plots-3.png" class="img-fluid" width="672"></p>
-</div>
 </div>
 </section>
 <section id="preliminary-results" class="level1">
@@ -171,45 +165,50 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/(P)ACF plots-4.png" class="img-fluid" width="672"></p>
 </div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/(P)ACF plots-5.png" class="img-fluid" width="672"></p>
-</div>
 </div>
 <p>##Integration order verification</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>                               Variable Lag.Order ADF.Statistic   p.value
-1                              Real GDP         4     -4.101261 0.0100000
-2                  Consumer Price Index         4     -1.227300 0.8978238
-3                    GDP Price Deflator         4     -1.229906 0.8967400
-4                 Commodity Price Index         4     -1.421895 0.8169025
-5                      Cash Rate Target         4     -4.867360 0.0100000
-6                          Money Supply         4     -1.083142 0.9218481
-7         Unemployment Rate: Queensland         4     -1.863189 0.6333935
-8    Unemployment Rate: New South Wales         4     -2.828556 0.2319516
-9           Unemployment Rate: Victoria         4     -2.127751 0.5233770
-10 Unemployment Rate: Western Australia         4     -2.034770 0.5620423</code></pre>
+<pre><code>                              Variable Lag.Order ADF.Statistic   p.value
+1                             Real GDP         4     -4.101261 0.0100000
+2                 Consumer Price Index         4     -1.227300 0.8978238
+3                     Cash Rate Target         4     -4.867360 0.0100000
+4                         Money Supply         4     -1.083142 0.9218481
+5        Unemployment Rate: Queensland         4     -1.863189 0.6333935
+6   Unemployment Rate: New South Wales         4     -2.828556 0.2319516
+7          Unemployment Rate: Victoria         4     -2.127751 0.5233770
+8 Unemployment Rate: Western Australia         4     -2.034770 0.5620423</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                               Variable Lag.Order ADF.Statistic    p.value
-1                                  &lt;NA&gt;        NA            NA         NA
-2                  Consumer Price Index         3     -2.753556 0.26317856
-3                    GDP Price Deflator         3     -4.829310 0.01000000
-4                 Commodity Price Index         3     -6.557985 0.01000000
-5                                  &lt;NA&gt;        NA            NA         NA
-6                          Money Supply         3     -3.353431 0.06542824
-7         Unemployment Rate: Queensland         3     -6.545921 0.01000000
-8    Unemployment Rate: New South Wales         3     -5.257979 0.01000000
-9           Unemployment Rate: Victoria         3     -6.576128 0.01000000
-10 Unemployment Rate: Western Australia         3     -6.968956 0.01000000</code></pre>
+<pre><code>                              Variable Lag.Order     ADF.Statistic
+1                             Real GDP       N/A               N/A
+2                 Consumer Price Index         3 -2.75355555867098
+3                     Cash Rate Target       N/A               N/A
+4                         Money Supply         3  -3.3534305304591
+5        Unemployment Rate: Queensland         3 -6.54592129393322
+6   Unemployment Rate: New South Wales         3 -5.25797923475302
+7          Unemployment Rate: Victoria         3 -6.57612760557298
+8 Unemployment Rate: Western Australia         3 -6.96895591125315
+            p.value
+1               N/A
+2 0.263178561883166
+3               N/A
+4 0.065428244923483
+5              0.01
+6              0.01
+7              0.01
+8              0.01</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          Variable Lag.Order ADF.Statistic p.value
-1         Real GDP         3    -14.330921    0.01
-2             &lt;NA&gt;        NA            NA      NA
-3             &lt;NA&gt;        NA            NA      NA
-4             &lt;NA&gt;        NA            NA      NA
-5 Cash Rate Target         3     -7.925252    0.01</code></pre>
+<pre><code>                              Variable Lag.Order     ADF.Statistic p.value
+1                             Real GDP       N/A               N/A     N/A
+2                 Consumer Price Index         3 -9.83668259722552    0.01
+3                     Cash Rate Target       N/A               N/A     N/A
+4                         Money Supply         3  -5.8300171259421    0.01
+5        Unemployment Rate: Queensland       N/A               N/A     N/A
+6   Unemployment Rate: New South Wales       N/A               N/A     N/A
+7          Unemployment Rate: Victoria       N/A               N/A     N/A
+8 Unemployment Rate: Western Australia       N/A               N/A     N/A</code></pre>
 </div>
 </div>
 </section>
@@ -228,11 +227,18 @@ u_t|Y_{t-1}~iid(0_N,I_N)
 <p><span class="math inline">\(u_t\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of independent structural shocks, conditional on <span class="math inline">\(Y_{t-1}\)</span>.</p>
 <p>Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.</p>
 <p>Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.</p>
-<section id="references" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<p>#```{R modelling framework}</p>
+<p>priors = c(1, 1, 1, 1)</p>
+<p>X = rnorm(100) Y= X+ rnorm(2)</p>
+<p>posteriors &lt;- function (X, Y, priors){</p>
+<p>V.bar = 1/((t(X)%<em>%X)+(1/priors[1])) A.bar = V.bar%</em>%((t(X)%<em>%Y)+(1/priors[1])%</em>%priors[2]) nu.bar = nrow(Y) + priors[3]</p>
+<p>post_temp = c(V.bar, A.bar, nu.bar) S.bar = priors[4] + (t(Y)%<em>%Y)+ (t(priors[2])%</em>%(1/priors[1])%<em>%priors[2]) - (t(post_temp[2])%</em>%(1/post_temp[1])%*%post_temp[2])</p>
+<p>posterior = c(V.bar, A.bar, nu.bar, S.bar)</p>
+<p>return(print(posterior)) }</p>
+<p>posteriors(X = X, Y = Y, priors = priors)</p>
+<p>``` ## References {.unnumbered}</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

@@ -24,19 +24,11 @@ Plots below
 #| warning: false
 
 library(lubridate)
+library(kableExtra)
 
 ##Nominal GDP per capita
 real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
 real.gdp_temp <- xts::xts(real.gdp$value, real.gdp$date)
-
-
-##GDP Deflator
-gdp.defl <- readabs::read_abs(series_id = "A2303730T") 
-gdp.defl_temp <- xts::xts(gdp.defl$value, ceiling_date(gdp.defl$date, "month")-days(1)) 
-
-##Commodity Price Index
-comm.pi <- readrba::read_rba(series_id = "GRCPAIAD") 
-comm.pi_temp <- xts::xts(comm.pi$value, comm.pi$date)
 
 ##Cash Rate Target
 crt <- readrba::read_rba(series_id = "FOOIRATCR") 
@@ -75,9 +67,9 @@ UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
 
 
 
-Y <- as.data.frame(merge(real.gdp_temp,CPI_temp, gdp.defl_temp,comm.pi_temp, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
+Y <- as.data.frame(merge(real.gdp_temp,CPI_temp, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
 
-names <- c("Real GDP","Consumer Price Index", "GDP Price Deflator", "Commodity Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+names <- c("Real GDP","Consumer Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
 
 Y <- na.omit(Y)[1:132,]
 
@@ -100,7 +92,7 @@ units <- c("$ millions","", "", "", "Per cent per annum", "$ billion", "Percent"
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
 
-for (i in 1:10){
+for (i in 1:8){
   plot(dates, y=Y[,i], main = paste(names[i]), ylab = paste(units[i]),xlab = "Date",type = "l",col = "blue",lwd = 2)
   
 }
@@ -116,7 +108,7 @@ for (i in 1:10){
 
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
-for(i in 1:10){
+for(i in 1:8){
   acf(Y[,i], main = paste(names[i]) )
 pacf(Y[,i], main = paste(names[i]))
 }
@@ -131,7 +123,9 @@ pacf(Y[,i], main = paste(names[i]))
 #| warning: false
 
 results.adf0 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
-for (i in 1:10){
+
+
+for (i in 1:8){
 adf = tseries::adf.test(Y[,i], k = 4)
 results.adf0[i,1] <- paste(names[i])
 results.adf0[i,2] <- adf[2]
@@ -141,30 +135,40 @@ results.adf0[i,4] <- adf[4]
 }
 
 results.adf1 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
-for (i in 1:10){
-  if (is.na(results.adf0[i, 3]) |results.adf0[i,4]>0.05){
+for (i in 1:8){
+  if (results.adf0[i,4]>0.05 & results.adf0[i,4]<1){
 diff_adf = tseries::adf.test(diff(Y[,i]), k = 3)
 results.adf1[i,1] <- paste(names[i])
 results.adf1[i,2] <- diff_adf[2]
 results.adf1[i,3] <- diff_adf[1]
 results.adf1[i,4] <- diff_adf[4]
-}
+  } else{
+results.adf1[i,1] <- paste(names[i])
+results.adf1[i,2] <- "N/A"
+results.adf1[i,3] <- "N/A"
+results.adf1[i,4] <- "N/A" }
 }
 
 results.adf2 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
-for (i in 1:10){
-  if (is.na(results.adf1[i, 4]) |results.adf1[i,3]>0.05){
+for (i in 1:8){
+  if (results.adf1[i,4]>0.05 & results.adf1[i,4]<1){
 diff_adf = tseries::adf.test(diff(diff(Y[,i])), k = 3)
 results.adf2[i,1] <- paste(names[i])
 results.adf2[i,2] <- diff_adf[2]
 results.adf2[i,3] <- diff_adf[1]
 results.adf2[i,4] <- diff_adf[4]
-}
+  }else{
+results.adf2[i,1] <- paste(names[i])
+results.adf2[i,2] <- "N/A"
+results.adf2[i,3] <- "N/A"
+results.adf2[i,4] <- "N/A" }
 }
 
 print(results.adf0)
 print(results.adf1)
 print(results.adf2)
+
+
 ```
 
 # Methodology
@@ -189,4 +193,98 @@ Using this model I will give me an insight into dynamic relationships between go
 
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
 
+```{R modelling framework}
+
+A.hat = matrix(1,2)
+Sigma.hat = matrix(1, 1)
+
+p = 2
+N = 1
+
+MLE <- c(A.hat, Sigma.hat)
+
+calc.priors <- function(N, p, MLE){
+  
+  #Setting Kappas
+  kappa.1 <- 0.02^2
+  kappa.2 <-100
+  K = 1 + (p*N)
+  
+  
+  
+  A.prior     = matrix(0,nrow(A.hat),ncol(A.hat))
+  A.prior[2:(N+1),] = diag(N)
+  V.prior     = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
+  S.prior     = diag(diag(Sigma.hat))
+  nu.prior    = N+1
+  
+  priors <- c(A.prior, V.prior, S.prior, nu.prior)
+  
+  
+  
+  
+  
+  
+  
+  return(print(priors))
+}
+
+calc.priors(N = 1, p = 2, MLE = MLE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+posteriors <- function (X, Y, priors){
+  
+  
+  A.prior <- priors[1]
+  V.prior <- priors[2]
+  S.prior <- priors[3]
+  nu.prior <- pr
+  
+  V.bar.inv   = t(X)%*%X + diag(1/diag(A.prior))
+  V.bar       = solve(V.bar.inv)
+  
+  A.bar       = V.bar%*%(t(X)%*%Y + diag(1/diag(V.prior))%*%A.prior)
+  nu.bar      = nrow(Y) + nu.prior
+  
+  S.bar       = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
+  S.bar.inv   = solve(S.bar)
+ 
+  
+  post_temp = c(V.bar, A.bar, nu.bar)
+  S.bar = priors[4] + (t(Y)%*%Y)+ (t(priors[2])%*%(1/priors[1])%*%priors[2]) - (t(post_temp[2])%*%(1/post_temp[1])%*%post_temp[2])
+  
+  posterior = c(V.bar, A.bar, nu.bar, S.bar)
+  
+  Sigma.posterior   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
+Sigma.posterior   = apply(Sigma.posterior,3,solve)
+Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
+A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
+L                 = t(chol(V.bar))
+for (s in 1:S){
+  A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol(Sigma.posterior[,,s])
+}
+  
+  
+  return(print(posterior))
+}
+
+
+posteriors(X = X, Y = Y, priors = priors)
+
+
+```
 ## References {.unnumbered}
