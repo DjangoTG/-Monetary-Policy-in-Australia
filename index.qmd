@@ -195,13 +195,8 @@ Using both of these techniques together, I will gain an understanding of the lon
 
 ```{R modelling framework}
 
-A.hat = matrix(1,2)
-Sigma.hat = matrix(1, 1)
 
-p = 2
-N = 1
-
-MLE <- c(A.hat, Sigma.hat)
+#MLE <- c(A.hat, Sigma.hat)
 
 calc.priors <- function(N, p, MLE){
   
@@ -229,7 +224,6 @@ calc.priors <- function(N, p, MLE){
   return(print(priors))
 }
 
-calc.priors(N = 1, p = 2, MLE = MLE)
 
 
 
@@ -283,7 +277,6 @@ for (s in 1:S){
 }
 
 
-posteriors(X = X, Y = Y, priors = priors)
 
 
 ```

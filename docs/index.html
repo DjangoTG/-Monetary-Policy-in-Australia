@@ -94,7 +94,10 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#acf-and-pacf-plots" id="toc-acf-and-pacf-plots" class="nav-link" data-scroll-target="#acf-and-pacf-plots">ACF and PACF plots</a></li>
   </ul></li>
-  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a>
+  <ul class="collapse">
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -174,10 +177,10 @@ ul.task-list li input[type="checkbox"] {
 2                 Consumer Price Index         4     -1.227300 0.8978238
 3                     Cash Rate Target         4     -4.867360 0.0100000
 4                         Money Supply         4     -1.083142 0.9218481
-5        Unemployment Rate: Queensland         4     -1.863189 0.6333935
-6   Unemployment Rate: New South Wales         4     -2.828556 0.2319516
-7          Unemployment Rate: Victoria         4     -2.127751 0.5233770
-8 Unemployment Rate: Western Australia         4     -2.034770 0.5620423</code></pre>
+5        Unemployment Rate: Queensland         4     -1.862981 0.6334799
+6   Unemployment Rate: New South Wales         4     -2.824256 0.2337397
+7          Unemployment Rate: Victoria         4     -2.128888 0.5229040
+8 Unemployment Rate: Western Australia         4     -2.041544 0.5592256</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                              Variable Lag.Order     ADF.Statistic
@@ -185,10 +188,10 @@ ul.task-list li input[type="checkbox"] {
 2                 Consumer Price Index         3 -2.75355555867098
 3                     Cash Rate Target       N/A               N/A
 4                         Money Supply         3  -3.3534305304591
-5        Unemployment Rate: Queensland         3 -6.54592129393322
-6   Unemployment Rate: New South Wales         3 -5.25797923475302
-7          Unemployment Rate: Victoria         3 -6.57612760557298
-8 Unemployment Rate: Western Australia         3 -6.96895591125315
+5        Unemployment Rate: Queensland         3 -6.54720362988815
+6   Unemployment Rate: New South Wales         3 -5.26681334164472
+7          Unemployment Rate: Victoria         3 -6.57502342373225
+8 Unemployment Rate: Western Australia         3 -6.95240168751401
             p.value
 1               N/A
 2 0.263178561883166
@@ -227,18 +230,14 @@ u_t|Y_{t-1}~iid(0_N,I_N)
 <p><span class="math inline">\(u_t\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of independent structural shocks, conditional on <span class="math inline">\(Y_{t-1}\)</span>.</p>
 <p>Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.</p>
 <p>Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.</p>
-<p>#```{R modelling framework}</p>
-<p>priors = c(1, 1, 1, 1)</p>
-<p>X = rnorm(100) Y= X+ rnorm(2)</p>
-<p>posteriors &lt;- function (X, Y, priors){</p>
-<p>V.bar = 1/((t(X)%<em>%X)+(1/priors[1])) A.bar = V.bar%</em>%((t(X)%<em>%Y)+(1/priors[1])%</em>%priors[2]) nu.bar = nrow(Y) + priors[3]</p>
-<p>post_temp = c(V.bar, A.bar, nu.bar) S.bar = priors[4] + (t(Y)%<em>%Y)+ (t(priors[2])%</em>%(1/priors[1])%<em>%priors[2]) - (t(post_temp[2])%</em>%(1/post_temp[1])%*%post_temp[2])</p>
-<p>posterior = c(V.bar, A.bar, nu.bar, S.bar)</p>
-<p>return(print(posterior)) }</p>
-<p>posteriors(X = X, Y = Y, priors = priors)</p>
-<p>``` ## References {.unnumbered}</p>
+<div class="cell">
+
+</div>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
