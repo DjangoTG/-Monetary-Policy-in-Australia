@@ -29,6 +29,7 @@ library(kableExtra)
 ##Nominal GDP per capita
 real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
 real.gdp_temp <- xts::xts(real.gdp$value, real.gdp$date)
+log.rgdp = log(real.gdp_temp)
 
 ##Cash Rate Target
 crt <- readrba::read_rba(series_id = "FOOIRATCR") 
@@ -42,7 +43,7 @@ MS_temp <- xts::xts(MS$value, MS$date)
 ##Consumer Price Index
 CPI <- readrba::read_rba(series_id = "GCPIAG") 
 CPI_temp <- xts::xts(CPI$value, CPI$date)
-
+D.CPI <- diff(CPI_temp)
 
 
 ##QLD Unemployment Rate
@@ -67,9 +68,9 @@ UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
 
 
 
-Y <- as.data.frame(merge(real.gdp_temp,CPI_temp, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
+Y <- as.data.frame(merge(log.rgdp, D.CPI, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
 
-names <- c("Real GDP","Consumer Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+names <- c("Log(Real GDP)","First Diff: Consumer Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
 
 Y <- na.omit(Y)[1:132,]
 
@@ -193,18 +194,73 @@ Using this model I will give me an insight into dynamic relationships between go
 
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
 
-```{R modelling framework}
+
+## Estimation Framework
+Starting with the reduced form, we can present the likelihood function as a normal-inverse Wishart distribution for $(A,\Sigma)$
+
+\begin{gather}
+Y = XA + E \\
+\\ E|X \sim MN_{T \times N}(0_{T \times N},\Sigma,I_T) 
+\end{gather}
+
+\begin{gather}
+L(A,\Sigma|Y,X) \propto det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(Y-XA)'(Y-XA) \right] \right\} \\
+\\ = det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(A-\hat{A})'X'X(A-\hat{A}) \right] \right\} exp \left\{-\frac{1}{2} tr \left[\Sigma^{-1}(Y-X \hat{A})'(Y-X \hat{A}) \right] \right\} \\
+\end{gather}
+
+where:
+\begin{gather}
+\hat{A} = (X'X)^{-1}X'Y
+\end{gather}
+
+Hence:
+
+\begin{gather}
+L(A,\Sigma|Y,X) = NIW_{K\times N}(\hat{A}, (X'X)^{-1},(Y-X\hat{A})'(Y-X\hat{A}), T-N-K)
+\end{gather}
 
 
-#MLE <- c(A.hat, Sigma.hat)
+This leads to joint prior distribution for $(A, \Sigma)$ of the same form:
 
-calc.priors <- function(N, p, MLE){
+\begin{gather}
+
+p(A,\Sigma) = p(A|\Sigma) p(\Sigma) \\
+A|\Sigma \sim MN_{K \times N} (\underline{A}, \Sigma , \underline{V}) \\
+\Sigma \sim IW_{N}(\underline{S},\underline{\nu})
+\end{gather}
+
+The full conditional posterior is, therefore, given by:
+
+\begin{gather}
+p(A,\Sigma |Y, X) = p(A|Y, X, \Sigma) p(\Sigma|Y,X) \\
+p(A|Y,X,\Sigma) = MN_{K \times N} (\bar{A}, \Sigma , \bar{V}) \\
+p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
+\end{gather}
+
+with parameters:
+
+\begin{gather}
+\bar{V} = (X^{'}X+ \underline{V}^{-1})^{-1} \\ 
+\\ \bar{A} = \bar{V}(X^{'}Y+\underline{V}^{-1} \underline{A}) \\ 
+\\ \bar{\nu} = T + \underline{\nu} \\ 
+\\ \bar{S} = \underline{S} + Y^{'}Y +  \underline{A}^{'}\underline{V}^{-1}\underline{A} - \bar{A}^{'}\bar{V}^{-1}\bar{A}
+\end{gather}
+
+
+The following function uses the Minnesota prior to set priors for $V$, $A$, $\nu,$ and $S$
+```{R - Setting Priors}
+#| echo: true
+
+
+calc.priors <- function(N, p, A.hat, Sigma.hat){
+  
+  
   
   #Setting Kappas
   kappa.1 <- 0.02^2
   kappa.2 <-100
-  K = 1 + (p*N)
   
+  K = 1 + (p*N)
   
   
   A.prior     = matrix(0,nrow(A.hat),ncol(A.hat))
@@ -213,17 +269,12 @@ calc.priors <- function(N, p, MLE){
   S.prior     = diag(diag(Sigma.hat))
   nu.prior    = N+1
   
-  priors <- c(A.prior, V.prior, S.prior, nu.prior)
+  priors <- list(A.prior = A.prior , V.prior=V.prior, S.prior=S.prior, nu.prior=nu.prior)
   
-  
-  
-  
-  
-  
-  
-  return(print(priors))
+  return(priors)
 }
 
+```
 
 
 
@@ -235,20 +286,21 @@ calc.priors <- function(N, p, MLE){
 
 
 
+Using these priors and the function below, we can calculate posteriors $A$, $B$, and $\Sigma$
+
+```{R }
+#| echo: true
 
 
-
-
-
-posteriors <- function (X, Y, priors){
+calc.posteriors <- function (S, X, Y, priors){
   
+  N = ncol(Y)
+  A.prior <- priors$A.prior
+  V.prior <- priors$V.prior
+  S.prior <- priors$S.prior
+  nu.prior <- priors$nu.prior
   
-  A.prior <- priors[1]
-  V.prior <- priors[2]
-  S.prior <- priors[3]
-  nu.prior <- pr
-  
-  V.bar.inv   = t(X)%*%X + diag(1/diag(A.prior))
+  V.bar.inv   = t(X)%*%X + diag(1/diag(V.prior))
   V.bar       = solve(V.bar.inv)
   
   A.bar       = V.bar%*%(t(X)%*%Y + diag(1/diag(V.prior))%*%A.prior)
@@ -257,27 +309,72 @@ posteriors <- function (X, Y, priors){
   S.bar       = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
   S.bar.inv   = solve(S.bar)
  
+ 
   
-  post_temp = c(V.bar, A.bar, nu.bar)
-  S.bar = priors[4] + (t(Y)%*%Y)+ (t(priors[2])%*%(1/priors[1])%*%priors[2]) - (t(post_temp[2])%*%(1/post_temp[1])%*%post_temp[2])
-  
-  posterior = c(V.bar, A.bar, nu.bar, S.bar)
-  
-  Sigma.posterior   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
-Sigma.posterior   = apply(Sigma.posterior,3,solve)
+  Sigma.posterior.inv   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
+Sigma.posterior   = apply(Sigma.posterior.inv,3,solve)
 Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
 A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
 L                 = t(chol(V.bar))
+B.posterior = array(NA, c(N,N,S))
+
+
+
 for (s in 1:S){
-  A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol(Sigma.posterior[,,s])
+  chol.sigma = chol(Sigma.posterior[,,s])
+  A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol.sigma
+  B.posterior[,,s]= t(chol.sigma)
 }
   
+  posterior = list(A.posterior = A.posterior, B.posterior = B.posterior, Sigma.posterior = Sigma.posterior)
   
-  return(print(posterior))
+  return(posterior)
 }
 
 
 
 
 ```
+
+
+## Reproduction for artificial data 
+
+The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.
+```{R}
+#| echo: true
+y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
+
+Y = y[2:1000,]
+X = cbind(1, y[1:999,])
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
+
+posteriors = calc.posteriors(S = 1000, X, Y, priors)
+```
+
+
+#A.posterior:
+```{R}
+apply(posteriors$A.posterior, 1:2, mean)
+```
+#B.posterior:
+```{R}
+apply(posteriors$B.posterior, 1:2, mean)
+```
+#Sigma.posterior:
+```{R}
+apply(posteriors$Sigma.posterior, 1:2, mean)
+```
+
+
+## Extended model
+```{R}
+
+```
+
+
 ## References {.unnumbered}
+
+

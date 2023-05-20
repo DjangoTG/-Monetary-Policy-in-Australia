@@ -1,0 +1,404 @@
+---
+title: "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis"
+author: "Django Trueman-Greinke"
+
+execute:
+  echo: false
+  
+bibliography: references.bib
+---
+
+
+> **Abstract.** Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.
+
+> **Keywords.** Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia \# Introduction
+
+Intro in progress
+
+Plots below
+
+# Data
+
+
+```{r Data}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(lubridate)
+library(kableExtra)
+
+##Nominal GDP per capita
+real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
+real.gdp_temp <- xts::xts(real.gdp$value, real.gdp$date)
+log.rgdp = log(real.gdp_temp)
+
+##Cash Rate Target
+crt <- readrba::read_rba(series_id = "FOOIRATCR") 
+crt_temp <- xts::xts(crt$value, crt$date)
+
+##Money Supply
+MS <- readrba::read_rba(series_id = "DMAM1N") 
+MS_temp <- xts::xts(MS$value, MS$date)
+
+
+##Consumer Price Index
+CPI <- readrba::read_rba(series_id = "GCPIAG") 
+CPI_temp <- xts::xts(CPI$value, CPI$date)
+D.CPI <- diff(CPI_temp)
+
+
+##QLD Unemployment Rate
+
+UER.QLD <- readabs::read_abs(series_id = "A84423284T") 
+UER.QLD_temp <- xts::xts(UER.QLD$value, UER.QLD$date - days(1))
+
+##NSW Unemployment Rate
+
+UER.NSW <- readabs::read_abs(series_id = "A84423270C") 
+UER.NSW_temp <- xts::xts(UER.NSW$value, UER.NSW$date - days(1))
+
+##VIC Unemployment Rate
+
+UER.VIC <- readabs::read_abs(series_id = "A84423350C") 
+UER.VIC_temp <- xts::xts(UER.VIC$value, UER.VIC$date - days(1))
+
+##WA Unemployment Rate
+
+UER.WA <- readabs::read_abs(series_id = "A84423322V") 
+UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
+
+
+
+Y <- as.data.frame(merge(log.rgdp, D.CPI, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
+
+names <- c("Log(Real GDP)","First Diff: Consumer Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+
+Y <- na.omit(Y)[1:132,]
+
+colnames(Y) <- names
+
+```
+
+
+The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.
+
+Below are plots of each of the available variables over time.
+
+
+```{r plots}
+#| echo: false
+#| message: false
+#| warning: false
+
+dates <- as.Date(rownames(Y),format = "%Y-%m-%d")
+
+units <- c("$ millions","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
+
+par(mfrow=c(2,2), mar=c(4,4,4,4))
+
+for (i in 1:8){
+  plot(dates, y=Y[,i], main = paste(names[i]), ylab = paste(units[i]),xlab = "Date",type = "l",col = "blue",lwd = 2)
+  
+}
+
+```
+
+
+# Preliminary Results
+
+## ACF and PACF plots
+
+
+```{r (P)ACF plots}
+
+
+
+par(mfrow=c(2,2), mar=c(4,4,4,4))
+for(i in 1:8){
+  acf(Y[,i], main = paste(names[i]) )
+pacf(Y[,i], main = paste(names[i]))
+}
+
+```
+
+
+##Integration order verification
+
+
+```{r Integration}
+#| echo: false
+#| message: false
+#| warning: false
+
+results.adf0 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
+
+
+for (i in 1:8){
+adf = tseries::adf.test(Y[,i], k = 4)
+results.adf0[i,1] <- paste(names[i])
+results.adf0[i,2] <- adf[2]
+results.adf0[i,3] <- adf[1]
+results.adf0[i,4] <- adf[4]
+
+}
+
+results.adf1 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
+for (i in 1:8){
+  if (results.adf0[i,4]>0.05 & results.adf0[i,4]<1){
+diff_adf = tseries::adf.test(diff(Y[,i]), k = 3)
+results.adf1[i,1] <- paste(names[i])
+results.adf1[i,2] <- diff_adf[2]
+results.adf1[i,3] <- diff_adf[1]
+results.adf1[i,4] <- diff_adf[4]
+  } else{
+results.adf1[i,1] <- paste(names[i])
+results.adf1[i,2] <- "N/A"
+results.adf1[i,3] <- "N/A"
+results.adf1[i,4] <- "N/A" }
+}
+
+results.adf2 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
+for (i in 1:8){
+  if (results.adf1[i,4]>0.05 & results.adf1[i,4]<1){
+diff_adf = tseries::adf.test(diff(diff(Y[,i])), k = 3)
+results.adf2[i,1] <- paste(names[i])
+results.adf2[i,2] <- diff_adf[2]
+results.adf2[i,3] <- diff_adf[1]
+results.adf2[i,4] <- diff_adf[4]
+  }else{
+results.adf2[i,1] <- paste(names[i])
+results.adf2[i,2] <- "N/A"
+results.adf2[i,3] <- "N/A"
+results.adf2[i,4] <- "N/A" }
+}
+
+print(results.adf0)
+print(results.adf1)
+print(results.adf2)
+
+
+```
+
+
+# Methodology
+
+Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
+
+\begin{align}
+B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
+\end{align} \begin{align}
+u_t|Y_{t-1}~iid(0_N,I_N)
+\end{align}
+
+Where:
+
+$Y_{t}$ is an $N\times 1$ vector of endogenous variables, including the Gini coefficient, government spending, revenue, GDP, and debt.
+
+$B_0$ is an $N \times N$ structural matrix capturing comtemporaneous relationships between variables.
+
+$u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on $Y_{t-1}$.
+
+Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
+
+Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
+
+
+## Estimation Framework
+Starting with the reduced form, we can present the likelihood function as a normal-inverse Wishart distribution for $(A,\Sigma)$
+
+\begin{gather}
+Y = XA + E \\
+\\ E|X \sim MN_{T \times N}(0_{T \times N},\Sigma,I_T) 
+\end{gather}
+
+\begin{gather}
+L(A,\Sigma|Y,X) \propto det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(Y-XA)'(Y-XA) \right] \right\} \\
+\\ = det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(A-\hat{A})'X'X(A-\hat{A}) \right] \right\} exp \left\{-\frac{1}{2} tr \left[\Sigma^{-1}(Y-X \hat{A})'(Y-X \hat{A}) \right] \right\} \\
+\end{gather}
+
+where:
+\begin{gather}
+\hat{A} = (X'X)^{-1}X'Y
+\end{gather}
+
+Hence:
+
+\begin{gather}
+L(A,\Sigma|Y,X) = NIW_{K\times N}(\hat{A}, (X'X)^{-1},(Y-X\hat{A})'(Y-X\hat{A}), T-N-K)
+\end{gather}
+
+
+This leads to joint prior distribution for $(A, \Sigma)$ of the same form:
+
+\begin{gather}
+
+p(A,\Sigma) = p(A|\Sigma) p(\Sigma) \\
+A|\Sigma \sim MN_{K \times N} (\underline{A}, \Sigma , \underline{V}) \\
+\Sigma \sim IW_{N}(\underline{S},\underline{\nu})
+\end{gather}
+
+The full conditional posterior is, therefore, given by:
+
+\begin{gather}
+p(A,\Sigma |Y, X) = p(A|Y, X, \Sigma) p(\Sigma|Y,X) \\
+p(A|Y,X,\Sigma) = MN_{K \times N} (\bar{A}, \Sigma , \bar{V}) \\
+p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
+\end{gather}
+
+with parameters:
+
+\begin{gather}
+\bar{V} = (X^{'}X+ \underline{V}^{-1})^{-1} \\ 
+\\ \bar{A} = \bar{V}(X^{'}Y+\underline{V}^{-1} \underline{A}) \\ 
+\\ \bar{\nu} = T + \underline{\nu} \\ 
+\\ \bar{S} = \underline{S} + Y^{'}Y +  \underline{A}^{'}\underline{V}^{-1}\underline{A} - \bar{A}^{'}\bar{V}^{-1}\bar{A}
+\end{gather}
+
+
+The following function uses the Minnesota prior to set priors for $V$, $A$, $\nu,$ and $S$
+
+```{R - Setting Priors}
+#| echo: true
+
+
+calc.priors <- function(N, p, A.hat, Sigma.hat){
+  
+  
+  
+  #Setting Kappas
+  kappa.1 <- 0.02^2
+  kappa.2 <-100
+  
+  K = 1 + (p*N)
+  
+  
+  A.prior     = matrix(0,nrow(A.hat),ncol(A.hat))
+  A.prior[2:(N+1),] = diag(N)
+  V.prior     = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
+  S.prior     = diag(diag(Sigma.hat))
+  nu.prior    = N+1
+  
+  priors <- list(A.prior = A.prior , V.prior=V.prior, S.prior=S.prior, nu.prior=nu.prior)
+  
+  return(priors)
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+Using these priors and the function below, we can calculate posteriors $A$, $B$, and $\Sigma$
+
+
+```{R }
+#| echo: true
+
+
+calc.posteriors <- function (S, X, Y, priors){
+  
+  N = ncol(Y)
+  A.prior <- priors$A.prior
+  V.prior <- priors$V.prior
+  S.prior <- priors$S.prior
+  nu.prior <- priors$nu.prior
+  
+  V.bar.inv   = t(X)%*%X + diag(1/diag(V.prior))
+  V.bar       = solve(V.bar.inv)
+  
+  A.bar       = V.bar%*%(t(X)%*%Y + diag(1/diag(V.prior))%*%A.prior)
+  nu.bar      = nrow(Y) + nu.prior
+  
+  S.bar       = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
+  S.bar.inv   = solve(S.bar)
+ 
+ 
+  
+  Sigma.posterior.inv   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
+Sigma.posterior   = apply(Sigma.posterior.inv,3,solve)
+Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
+A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
+L                 = t(chol(V.bar))
+B.posterior = array(NA, c(N,N,S))
+
+
+
+for (s in 1:S){
+  chol.sigma = chol(Sigma.posterior[,,s])
+  A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol.sigma
+  B.posterior[,,s]= t(chol.sigma)
+}
+  
+  posterior = list(A.posterior = A.posterior, B.posterior = B.posterior, Sigma.posterior = Sigma.posterior)
+  
+  return(posterior)
+}
+
+
+
+
+```
+
+
+
+## Reproduction for artificial data 
+
+The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.
+
+```{R}
+#| echo: true
+y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
+
+Y = y[2:1000,]
+X = cbind(1, y[1:999,])
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
+
+posteriors = calc.posteriors(S = 1000, X, Y, priors)
+```
+
+
+
+#A.posterior:
+
+```{R}
+apply(posteriors$A.posterior, 1:2, mean)
+```
+
+#B.posterior:
+
+```{R}
+apply(posteriors$B.posterior, 1:2, mean)
+```
+
+#Sigma.posterior:
+
+```{R}
+apply(posteriors$Sigma.posterior, 1:2, mean)
+```
+
+
+
+## Extended model
+
+```{R}
+
+```
+
+
+
+## References {.unnumbered}
+
+
+
