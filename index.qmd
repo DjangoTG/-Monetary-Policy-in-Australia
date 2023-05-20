@@ -355,15 +355,15 @@ posteriors = calc.posteriors(S = 1000, X, Y, priors)
 ```
 
 
-#A.posterior:
+A.posterior:
 ```{R}
 apply(posteriors$A.posterior, 1:2, mean)
 ```
-#B.posterior:
+B.posterior:
 ```{R}
 apply(posteriors$B.posterior, 1:2, mean)
 ```
-#Sigma.posterior:
+Sigma.posterior:
 ```{R}
 apply(posteriors$Sigma.posterior, 1:2, mean)
 ```
