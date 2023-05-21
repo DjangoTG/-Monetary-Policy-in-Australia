@@ -25,14 +25,14 @@
     "href": "index.html#reproduction-for-artificial-data",
     "title": "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Reproduction for artificial data",
-    "text": "Reproduction for artificial data\nThe above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.\n\ny = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)\n\nY = y[2:1000,]\nX = cbind(1, y[1:999,])\n\nA.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)\nSigma.hat = diag(2)\npriors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)\n\nposteriors = calc.posteriors(S = 1000, X, Y, priors)\n\n#A.posterior:\n\n\n            [,1]         [,2]\n[1,] 0.089180009 -0.331145384\n[2,] 0.994791442  0.004644796\n[3,] 0.004959483  0.989858204\n\n\n#B.posterior:\n\n\n           [,1]     [,2]\n[1,] 1.00069047 0.000000\n[2,] 0.06083063 1.003049\n\n\n#Sigma.posterior:\n\n\n          [,1]      [,2]\n[1,] 1.0018793 0.0608849\n[2,] 0.0608849 1.0113572"
+    "text": "Reproduction for artificial data\nThe above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.\n\ny = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)\n\nY = y[2:1000,]\nX = cbind(1, y[1:999,])\n\nA.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)\nSigma.hat = diag(2)\npriors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)\n\nposteriors = calc.posteriors(S = 1000, X, Y, priors)\n\nA.posterior:\n\n\n             [,1]        [,2]\n[1,] -0.171184904  0.04492220\n[2,]  0.998674014 -0.00700686\n[3,]  0.002828323  0.99395564\n\n\nB.posterior:\n\n\n            [,1]     [,2]\n[1,]  0.97200031 0.000000\n[2,] -0.01431907 1.021197\n\n\nSigma.posterior:\n\n\n            [,1]        [,2]\n[1,]  0.94521074 -0.01394888\n[2,] -0.01394888  1.04461762"
   },
   {
     "objectID": "index.html#extended-model",
     "href": "index.html#extended-model",
     "title": "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Extended model",
-    "text": "Extended model"
+    "text": "Extended model\n\n\n\nA.posterior:\n\n\n             [,1]        [,2]\n[1,]  0.026187242 0.193687868\n[2,]  0.997974047 0.002273223\n[3,] -0.000566568 0.992520276\n\n\nB.posterior:\n\n\n          [,1]     [,2]\n[1,]  0.992321 0.000000\n[2,] -0.051292 1.022965\n\n\nSigma.posterior:\n\n\n            [,1]        [,2]\n[1,]  0.98516341 -0.05092375\n[2,] -0.05092375  1.05065079"
   },
   {
     "objectID": "index.html#references",

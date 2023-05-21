@@ -372,9 +372,51 @@ apply(posteriors$Sigma.posterior, 1:2, mean)
 ## Extended model
 ```{R}
 
+prior.ext.dummyset <- function(X, Y){
+  initial.obv.Y <-(matrix(0, nrow = 1, ncol = ncol(Y)))
+  initial.obv.X <- (matrix(0, nrow = 1, ncol = ncol(X)))
+  
+  Y.ex = rbind(initial.obv.Y, Y)
+  X.ex = rbind(initial.obv.X, X)
+  
+  dummy.obvs.prior <- list(Y.ex = Y.ex, X.ex = X.ex)
+  
+  return(dummy.obvs.prior)
+}
+  
+
+y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
+
+Y = y[2:1000,]
+X = cbind(1, y[1:999,])
+
+dum = prior.ext.dummyset(X = X, Y = Y)
+
+X.2 <- dum$X.ex
+Y.2 <- dum$Y.ex
+
+A.hat = solve(t(dum$X.ex)%*%dum$X.ex)%*%(t(dum$X.ex)%*%dum$Y.ex)
+Sigma.hat = diag(2)
+
+priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
+
+posteriors = calc.posteriors(S = 1000, X = dum$X.ex, dum$Y.ex, priors)
+
+
 ```
 
-
+A.posterior:
+```{R}
+apply(posteriors$A.posterior, 1:2, mean)
+```
+B.posterior:
+```{R}
+apply(posteriors$B.posterior, 1:2, mean)
+```
+Sigma.posterior:
+```{R}
+apply(posteriors$Sigma.posterior, 1:2, mean)
+```
 ## References {.unnumbered}
 
 
