@@ -160,8 +160,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a>
   <ul class="collapse">
   <li><a href="#estimation-framework" id="toc-estimation-framework" class="nav-link" data-scroll-target="#estimation-framework">Estimation Framework</a></li>
+  <li><a href="#extended-model-formulation" id="toc-extended-model-formulation" class="nav-link" data-scroll-target="#extended-model-formulation">Extended model formulation</a></li>
   <li><a href="#reproduction-for-artificial-data" id="toc-reproduction-for-artificial-data" class="nav-link" data-scroll-target="#reproduction-for-artificial-data">Reproduction for artificial data</a></li>
-  <li><a href="#extended-model" id="toc-extended-model" class="nav-link" data-scroll-target="#extended-model">Extended model</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -400,75 +400,159 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="extended-model-formulation" class="level2">
+<h2 class="anchored" data-anchor-id="extended-model-formulation">Extended model formulation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prior.ex <span class="ot">&lt;-</span> <span class="cf">function</span>(Y, X, p){</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  in.obvs.Y <span class="ot">&lt;-</span> Y[<span class="dv">1</span><span class="sc">:</span>p,]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">=</span> (N<span class="sc">*</span>p)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  gamma<span class="fl">.3</span> <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  Y.D <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> N, <span class="at">ncol =</span> N)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  X.D <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> N, <span class="at">ncol =</span> M)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N){</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(p <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      dum.i <span class="ot">=</span> in.obvs.Y[i]</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{dum.i <span class="ot">=</span> <span class="fu">mean</span>(in.obvs.Y[,i])}</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N){</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(i <span class="sc">==</span> j){</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        Y.D[j,i] <span class="ot">=</span> (dum.i<span class="sc">/</span>gamma<span class="fl">.3</span>)}</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span>{Y.D[j,i] <span class="ot">=</span> <span class="dv">0</span>}</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N){</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span>(s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M){</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(p <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      dum.i <span class="ot">=</span> in.obvs.Y[i]</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{dum.i <span class="ot">=</span> <span class="fu">mean</span>(in.obvs.Y[,i])}</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span>(s <span class="sc">==</span> i <span class="sc">&amp;</span> s <span class="sc">&lt;</span> M){</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>          X.D[i, s] <span class="ot">=</span> dum.i</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>{X.D[i,s] <span class="ot">=</span> <span class="dv">0</span>}</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  }}</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>  gamma<span class="fl">.4</span> <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  Y.temp <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> N, <span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  X.temp <span class="ot">=</span> <span class="fu">matrix</span>(<span class="at">ncol =</span> M, <span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>N){</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(p <span class="sc">==</span> <span class="dv">1</span>){</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>      dum.i <span class="ot">=</span> <span class="fu">mean</span>(in.obvs.Y[i])</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{dum.i <span class="ot">=</span> <span class="fu">mean</span>(in.obvs.Y[,i])}</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    Y.temp[i] <span class="ot">=</span> dum.i<span class="sc">/</span>gamma<span class="fl">.4</span>}</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M){</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(p <span class="sc">==</span> <span class="dv">1</span>){dum.s <span class="ot">=</span> <span class="fu">mean</span>(in.obvs.Y[s])}</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{dum.s <span class="ot">=</span> <span class="fu">mean</span>(in.obvs.Y[,s])}</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(s <span class="sc">&lt;</span> M){</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>        X.temp[s] <span class="ot">=</span> dum.s<span class="sc">/</span>gamma<span class="fl">.4</span>}</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>{X.temp[s] <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>gamma<span class="fl">.4</span>}}</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>  Y.ex <span class="ot">=</span> <span class="fu">rbind</span>(Y.D, Y.temp)</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>  X.ex <span class="ot">=</span> <span class="fu">rbind</span>(X.D, X.temp)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>  XN <span class="ot">&lt;-</span> <span class="fu">rbind</span>(X.ex, X)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  YN <span class="ot">&lt;-</span> <span class="fu">rbind</span>(Y.ex, Y)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>  ext.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">YN =</span> YN, <span class="at">XN =</span> XN)</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ext.data)</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="reproduction-for-artificial-data" class="level2">
 <h2 class="anchored" data-anchor-id="reproduction-for-artificial-data">Reproduction for artificial data</h2>
 <p>The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">apply</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">ncol =</span> <span class="dv">2</span>), <span class="dv">2</span>, cumsum)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> y[<span class="dv">2</span><span class="sc">:</span><span class="dv">1000</span>,]</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, y[<span class="dv">1</span><span class="sc">:</span><span class="dv">999</span>,])</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>Sigma.hat <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">2</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">N =</span> <span class="dv">2</span>, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">A.hat =</span> A.hat, <span class="at">Sigma.hat =</span> Sigma.hat)</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>posteriors <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">S =</span> <span class="dv">1000</span>, X, Y, priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Basic Model Test</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">apply</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">ncol =</span> <span class="dv">2</span>), <span class="dv">2</span>, cumsum)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> y[<span class="dv">2</span><span class="sc">:</span><span class="dv">1000</span>,]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, y[<span class="dv">1</span><span class="sc">:</span><span class="dv">999</span>,])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>Sigma.hat <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">2</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">N =</span> <span class="dv">2</span>, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">A.hat =</span> A.hat, <span class="at">Sigma.hat =</span> Sigma.hat)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>posteriors <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X, <span class="at">Y=</span> Y, priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>             [,1]        [,2]
-[1,] -0.171184904  0.04492220
-[2,]  0.998674014 -0.00700686
-[3,]  0.002828323  0.99395564</code></pre>
+<pre><code>            [,1]         [,2]
+[1,] 0.121486678  0.141475807
+[2,] 0.993842846 -0.001490831
+[3,] 0.006154205  0.996621962</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>            [,1]     [,2]
-[1,]  0.97200031 0.000000
-[2,] -0.01431907 1.021197</code></pre>
+<pre><code>           [,1]      [,2]
+[1,] 0.97642011 0.0000000
+[2,] 0.07145266 0.9895549</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>            [,1]        [,2]
-[1,]  0.94521074 -0.01394888
-[2,] -0.01394888  1.04461762</code></pre>
+<pre><code>           [,1]       [,2]
+[1,] 0.95385836 0.06978697
+[2,] 0.06978697 0.98585801</code></pre>
 </div>
 </div>
-</section>
-<section id="extended-model" class="level2">
-<h2 class="anchored" data-anchor-id="extended-model">Extended model</h2>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Extended model Test</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>inital.dum <span class="ot">=</span> <span class="fu">prior.ex</span>(<span class="at">X =</span> X, <span class="at">Y =</span> Y, <span class="at">p =</span> <span class="dv">1</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>XN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>XN</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>YN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>YN</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(XN)<span class="sc">%*%</span>XN)<span class="sc">%*%</span>(<span class="fu">t</span>(XN)<span class="sc">%*%</span>YN)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Sigma.hat <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">2</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>priors.ext <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">N =</span> <span class="dv">2</span>, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">A.hat =</span> A.hat, <span class="at">Sigma.hat =</span> Sigma.hat)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>posteriors.ext <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> XN,<span class="at">Y=</span> YN, <span class="at">priors =</span> priors.ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>             [,1]        [,2]
-[1,]  0.026187242 0.193687868
-[2,]  0.997974047 0.002273223
-[3,] -0.000566568 0.992520276</code></pre>
+<pre><code>            [,1]         [,2]
+[1,] 0.124741875  0.143752983
+[2,] 0.993645879 -0.001588979
+[3,] 0.006339764  0.996663118</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>          [,1]     [,2]
-[1,]  0.992321 0.000000
-[2,] -0.051292 1.022965</code></pre>
+<pre><code>           [,1]      [,2]
+[1,] 0.97733020 0.0000000
+[2,] 0.06756027 0.9929101</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>            [,1]        [,2]
-[1,]  0.98516341 -0.05092375
-[2,] -0.05092375  1.05065079</code></pre>
+<pre><code>           [,1]       [,2]
+[1,] 0.95564550 0.06603196
+[2,] 0.06603196 0.99185696</code></pre>
 </div>
 </div>
 </section>

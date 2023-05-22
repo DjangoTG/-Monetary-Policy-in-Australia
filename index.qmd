@@ -336,51 +336,11 @@ for (s in 1:S){
 
 ```
 
+## Extended model formulation
 
-## Reproduction for artificial data 
-
-The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.
 ```{R}
 #| echo: true
-c = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
 
-C = c[2:1000,]
-L = cbind(1, c[1:999,])
-
-A.hat = solve(t(L)%*%L)%*%(t(L)%*%C)
-Sigma.hat = diag(2)
-priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
-
-posteriors = calc.posteriors(S = 1000, X = L, Y= C, priors)
-```
-
-
-A.posterior:
-```{R}
-apply(posteriors$A.posterior, 1:2, mean)
-```
-B.posterior:
-```{R}
-apply(posteriors$B.posterior, 1:2, mean)
-```
-Sigma.posterior:
-```{R}
-apply(posteriors$Sigma.posterior, 1:2, mean)
-```
-
-
-## Extended model
-
-
-```{R}
-
-rm(list=ls())
-c = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
-
-Y = c[2:1000,]
-X = cbind(1, c[1:999,])
-
-p = 1
 prior.ex <- function(Y, X, p){
   in.obvs.Y <- Y[1:p,]
   
@@ -457,39 +417,25 @@ prior.ex <- function(Y, X, p){
 ```
 
 
+## Reproduction for artificial data 
+
+The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.
 ```{R}
+#| echo: true
 
-prior.ext.dummyset <- function(X, Y){
-  initial.obv.Y <-(matrix(0, nrow = 1, ncol = ncol(Y)))
-  initial.obv.X <- (matrix(0, nrow = 1, ncol = ncol(X)))
-  
-  Y.ex = rbind(initial.obv.Y, Y)
-  X.ex = rbind(initial.obv.X, X)
-  
-  dummy.obvs.prior <- list(Y.ex = Y.ex, X.ex = X.ex)
-  
-  
-}
-  
+#Basic Model Test
+y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
 
+Y = y[2:1000,]
+X = cbind(1, y[1:999,])
 
-p=1
-inital.dum = prior.ex(X = X, Y = Y, p = 1)
-
-
-
-XN <- inital.dum$XN
-YN <- inital.dum$YN
-
-A.hat = solve(t(XN)%*%XN)%*%(t(XN)%*%YN)
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
 Sigma.hat = diag(2)
-
 priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
 
-posteriors = calc.posteriors(S = 1000, X = XN, YN, priors)
-
-
+posteriors = calc.posteriors(S = 1000, X = X, Y= Y, priors)
 ```
+
 
 A.posterior:
 ```{R}
@@ -503,18 +449,37 @@ Sigma.posterior:
 ```{R}
 apply(posteriors$Sigma.posterior, 1:2, mean)
 ```
+```{R}
+#| echo: true
+##Extended model Test
+inital.dum = prior.ex(X = X, Y = Y, p = 1)
+XN <- inital.dum$XN
+YN <- inital.dum$YN
 
+A.hat = solve(t(XN)%*%XN)%*%(t(XN)%*%YN)
+Sigma.hat = diag(2)
 
-## Application to data
+priors.ext = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
 
-``` {R}
-y = cbind(Y[1:4], Y[5])
-x = y[1:(nrow(y)-1),]
-
-A.hat = solve(t(x)%*%x)%*%(t(x)%*%y)
+posteriors.ext = calc.posteriors(S = 1000, X = XN,Y= YN, priors = priors.ext)
 
 
 ```
+
+A.posterior:
+```{R}
+apply(posteriors.ext$A.posterior, 1:2, mean)
+```
+B.posterior:
+```{R}
+apply(posteriors.ext$B.posterior, 1:2, mean)
+```
+Sigma.posterior:
+```{R}
+apply(posteriors.ext$Sigma.posterior, 1:2, mean)
+```
+
+
 ## References {.unnumbered}
 
 
