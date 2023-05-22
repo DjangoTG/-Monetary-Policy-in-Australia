@@ -444,8 +444,11 @@ prior.ex <- function(Y, X, p){
   
   Y.ex = rbind(Y.D, Y.temp)
   X.ex = rbind(X.D, X.temp)
-  dummy.obvs.prior = list(Y.ex = Y.ex, X.ex = X.ex)
-  return(dummy.obvs.prior)
+  XN <- rbind(X.ex, X)
+  YN <- rbind(Y.ex, Y)
+  ext.data <- list(YN = YN, XN = XN)
+  
+  return(ext.data)
   
   
 }
@@ -473,18 +476,17 @@ prior.ext.dummyset <- function(X, Y){
 p=1
 inital.dum = prior.ex(X = X, Y = Y, p = 1)
 
-X.2 <- inital.dum$X.ex
-Y.2 <- inital.dum$Y.ex
 
-XN <- rbind(X.2, X)
-YN <- rbind(Y.2, Y)
+
+XN <- inital.dum$XN
+YN <- inital.dum$YN
 
 A.hat = solve(t(XN)%*%XN)%*%(t(XN)%*%YN)
 Sigma.hat = diag(2)
 
 priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
 
-posteriors = calc.posteriors(S = 1000, X = dum$X.ex, dum$Y.ex, priors)
+posteriors = calc.posteriors(S = 1000, X = XN, YN, priors)
 
 
 ```
