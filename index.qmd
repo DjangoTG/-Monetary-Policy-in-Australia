@@ -340,7 +340,7 @@ for (s in 1:S){
 
 ```{R}
 #| echo: true
-
+p = 2
 prior.ex <- function(Y, X, p){
   in.obvs.Y <- Y[1:p,]
   
@@ -395,11 +395,14 @@ prior.ex <- function(Y, X, p){
     Y.temp[i] = dum.i/gamma.4}
   
   for (s in 1:M){
-    if(p == 1){dum.s = mean(in.obvs.Y[s])}
-    else{dum.s = mean(in.obvs.Y[,s])}
-    
-    if(s < M){
+    if(s<=N){
+    if(p == 1){
+      dum.s = mean(in.obvs.Y[s])}
+    else{
+      dum.s = mean(in.obvs.Y[,s])}
+        if(s < M){
         X.temp[s] = dum.s/gamma.4}
+    }
   else{X.temp[s] = 1/gamma.4}}
   
   Y.ex = rbind(Y.D, Y.temp)
@@ -456,12 +459,12 @@ inital.dum = prior.ex(X = X, Y = Y, p = 1)
 XN <- inital.dum$XN
 YN <- inital.dum$YN
 
-A.hat = solve(t(XN)%*%XN)%*%(t(XN)%*%YN)
-Sigma.hat = diag(2)
+A.hat.ex = solve(t(XN)%*%XN)%*%(t(XN)%*%YN)
+Sigma.hat.ex = diag(2)
 
-priors.ext = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
+priors.ext = calc.priors(N = 2, p = 1, A.hat = A.hat.ex, Sigma.hat = Sigma.hat.ex)
 
-posteriors.ext = calc.posteriors(S = 1000, X = XN,Y= YN, priors = priors.ext)
+posteriors.ext = calc.posteriors(S = 1000, X = XN,Y=YN, priors = priors.ext)
 
 
 ```
