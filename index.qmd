@@ -373,9 +373,15 @@ apply(posteriors$Sigma.posterior, 1:2, mean)
 
 
 ```{R}
-p = 2
-Y=C
-sumofcoef.prior <- function(Y, X, p){
+
+rm(list=ls())
+c = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
+
+Y = c[2:1000,]
+X = cbind(1, c[1:999,])
+
+p = 1
+prior.ex <- function(Y, X, p){
   in.obvs.Y <- Y[1:p,]
   
   N = ncol(Y)
@@ -387,7 +393,10 @@ sumofcoef.prior <- function(Y, X, p){
   
   
   for (i in 1:N){
-    dum.i = mean(in.obvs.Y[,i])
+    if(p == 1){
+      dum.i = in.obvs.Y[i]
+    }
+    else{dum.i = mean(in.obvs.Y[,i])}
     for (j in 1:N){
       if(i == j){
         Y.D[j,i] = (dum.i/gamma.3)}
@@ -396,15 +405,21 @@ sumofcoef.prior <- function(Y, X, p){
     }
   }
   
-  for (i in 1:M){
-    
-    for (j in 1:N){
-      dum.j = mean(in.obvs.Y[,j])
-      if(i == j & j<M){
-        X.D[j,i] = (dum.j/gamma.3)}
-      else{X.D[j,i] = 0}
-          }
-  }
+  for(i in 1:N){
+      for(s in 1:M){
+        if(p == 1){
+      dum.i = in.obvs.Y[i]
+    }
+    else{dum.i = mean(in.obvs.Y[,i])}
+        if(s == i & s < M){
+          X.D[i, s] = dum.i
+        }
+        else{X.D[i,s] = 0}
+        
+  }}
+  
+  
+  
   
   gamma.4 = 1
   
@@ -412,14 +427,26 @@ sumofcoef.prior <- function(Y, X, p){
   X.temp = matrix(ncol = M, nrow = 1)
   
   for (i in 1:N){
-    dum.i = mean(in.obvs.Y[,i])
+    if(p == 1){
+      dum.i = mean(in.obvs.Y[i])
+    }
+    else{dum.i = mean(in.obvs.Y[,i])}
+    
     Y.temp[i] = dum.i/gamma.4}
   
-  for (i in 1:M){
-    if(i <= N){
-    dum.i = mean(in.obvs.Y[,i])
-    X.temp[i] = dum.i/gamma.4}
-  else{X.temp[i] = 1/gamma.4}}
+  for (s in 1:M){
+    if(p == 1){dum.s = mean(in.obvs.Y[s])}
+    else{dum.s = mean(in.obvs.Y[,s])}
+    
+    if(s < M){
+        X.temp[s] = dum.s/gamma.4}
+  else{X.temp[s] = 1/gamma.4}}
+  
+  Y.ex = rbind(Y.D, Y.temp)
+  X.ex = rbind(X.D, X.temp)
+  dummy.obvs.prior = list(Y.ex = Y.ex, X.ex = X.ex)
+  return(dummy.obvs.prior)
+  
   
 }
 
@@ -438,21 +465,21 @@ prior.ext.dummyset <- function(X, Y){
   
   dummy.obvs.prior <- list(Y.ex = Y.ex, X.ex = X.ex)
   
-  return(dummy.obvs.prior)
+  
 }
   
 
-c = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
 
-C = c[2:1000,]
-L = cbind(1, c[1:999,])
+p=1
+inital.dum = prior.ex(X = X, Y = Y, p = 1)
 
-dum = prior.ext.dummyset(X = L, Y = C)
+X.2 <- inital.dum$X.ex
+Y.2 <- inital.dum$Y.ex
 
-X.2 <- dum$X.ex
-Y.2 <- dum$Y.ex
+XN <- rbind(X.2, X)
+YN <- rbind(Y.2, Y)
 
-A.hat = solve(t(dum$X.ex)%*%dum$X.ex)%*%(t(dum$X.ex)%*%dum$Y.ex)
+A.hat = solve(t(XN)%*%XN)%*%(t(XN)%*%YN)
 Sigma.hat = diag(2)
 
 priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
