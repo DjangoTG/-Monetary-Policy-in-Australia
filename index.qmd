@@ -342,16 +342,16 @@ for (s in 1:S){
 The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.
 ```{R}
 #| echo: true
-y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
+c = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
 
-Y = y[2:1000,]
-X = cbind(1, y[1:999,])
+C = c[2:1000,]
+L = cbind(1, c[1:999,])
 
-A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+A.hat = solve(t(L)%*%L)%*%(t(L)%*%C)
 Sigma.hat = diag(2)
 priors = calc.priors(N = 2, p = 1, A.hat = A.hat, Sigma.hat = Sigma.hat)
 
-posteriors = calc.posteriors(S = 1000, X, Y, priors)
+posteriors = calc.posteriors(S = 1000, X = L, Y= C, priors)
 ```
 
 
@@ -370,6 +370,63 @@ apply(posteriors$Sigma.posterior, 1:2, mean)
 
 
 ## Extended model
+
+
+```{R}
+p = 2
+Y=C
+sumofcoef.prior <- function(Y, X, p){
+  in.obvs.Y <- Y[1:p,]
+  
+  N = ncol(Y)
+  M = (N*p)+1
+  gamma.3 = 1
+  Y.D <- matrix(nrow = N, ncol = N)
+  X.D <- matrix(nrow = N, ncol = M)
+  
+  
+  
+  for (i in 1:N){
+    dum.i = mean(in.obvs.Y[,i])
+    for (j in 1:N){
+      if(i == j){
+        Y.D[j,i] = (dum.i/gamma.3)}
+      else{Y.D[j,i] = 0}
+      
+    }
+  }
+  
+  for (i in 1:M){
+    
+    for (j in 1:N){
+      dum.j = mean(in.obvs.Y[,j])
+      if(i == j & j<M){
+        X.D[j,i] = (dum.j/gamma.3)}
+      else{X.D[j,i] = 0}
+          }
+  }
+  
+  gamma.4 = 1
+  
+  Y.temp = matrix(ncol = N, nrow = 1)
+  X.temp = matrix(ncol = M, nrow = 1)
+  
+  for (i in 1:N){
+    dum.i = mean(in.obvs.Y[,i])
+    Y.temp[i] = dum.i/gamma.4}
+  
+  for (i in 1:M){
+    if(i <= N){
+    dum.i = mean(in.obvs.Y[,i])
+    X.temp[i] = dum.i/gamma.4}
+  else{X.temp[i] = 1/gamma.4}}
+  
+}
+
+
+```
+
+
 ```{R}
 
 prior.ext.dummyset <- function(X, Y){
@@ -385,12 +442,12 @@ prior.ext.dummyset <- function(X, Y){
 }
   
 
-y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
+c = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
 
-Y = y[2:1000,]
-X = cbind(1, y[1:999,])
+C = c[2:1000,]
+L = cbind(1, c[1:999,])
 
-dum = prior.ext.dummyset(X = X, Y = Y)
+dum = prior.ext.dummyset(X = L, Y = C)
 
 X.2 <- dum$X.ex
 Y.2 <- dum$Y.ex
@@ -416,6 +473,18 @@ apply(posteriors$B.posterior, 1:2, mean)
 Sigma.posterior:
 ```{R}
 apply(posteriors$Sigma.posterior, 1:2, mean)
+```
+
+
+## Application to data
+
+``` {R}
+y = cbind(Y[1:4], Y[5])
+x = y[1:(nrow(y)-1),]
+
+A.hat = solve(t(x)%*%x)%*%(t(x)%*%y)
+
+
 ```
 ## References {.unnumbered}
 
