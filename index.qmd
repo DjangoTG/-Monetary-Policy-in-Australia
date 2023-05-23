@@ -402,7 +402,7 @@ apply(posteriors$Sigma.posterior, 1:2, mean)
 ```{R}
 #| echo: true
 ##Extended model Test
-inital.dum = prior.ex(X = X, Y = Y, p = 1)
+inital.dum = prior.ex(data, p = 1)
 XN <- inital.dum$XN
 YN <- inital.dum$YN
 
