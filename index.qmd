@@ -24,7 +24,7 @@ Plots below
 #| warning: false
 
 library(lubridate)
-library(kableExtra)
+library(xtable)
 
 ##Nominal GDP per capita
 real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
@@ -129,11 +129,12 @@ results.adf0 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "AD
 for (i in 1:8){
 adf = tseries::adf.test(data[,i], k = 4)
 results.adf0[i,1] <- paste(names[i])
-results.adf0[i,2] <- adf[2]
-results.adf0[i,3] <- adf[1]
-results.adf0[i,4] <- adf[4]
+results.adf0[i,2] <- adf$parameter
+results.adf0[i,3] <- adf$statistic
+results.adf0[i,4] <- adf$p.value
 
 }
+
 
 results.adf1 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
 for (i in 1:8){
@@ -471,6 +472,74 @@ Sigma.posterior:
 ```{R}
 round(apply(posteriors.emp$Sigma.posterior, 1:2, mean),3)
 ```
+
+```{R}
+#IRFs
+A.posterior <- posteriors.emp$A.posterior
+B.posterior <- posteriors.emp$B.posterior
+h = 8
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
+
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% IRF.posterior[,,i-1,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+
+IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
+hh          = 1:5
+
+pdf(file="irf-au-mps.pdf", height=9, width=12)
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:5){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  if (n==5 | n==6){
+    axis(1,c(1,2,5,9),c("","1 quarter","1 year","2 years"))
+  } else {
+    axis(1,c(1,2,5,9),c("","","",""))
+  }
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]))
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2)
+}
+dev.off()
+
+
+
+
+```
+
+
 ## References {.unnumbered}
 
 
