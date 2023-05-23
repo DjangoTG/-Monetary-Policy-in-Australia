@@ -389,26 +389,27 @@ posteriors = calc.posteriors(S = 1000, X = X, Y= Y, priors)
 
 A.posterior:
 ```{R}
-apply(posteriors$A.posterior, 1:2, mean)
+round(apply(posteriors$A.posterior, 1:2, mean),3)
 ```
 B.posterior:
 ```{R}
-apply(posteriors$B.posterior, 1:2, mean)
+round(apply(posteriors$B.posterior, 1:2, mean),3)
 ```
 Sigma.posterior:
 ```{R}
-apply(posteriors$Sigma.posterior, 1:2, mean)
+round(apply(posteriors$Sigma.posterior, 1:2, mean),3)
 ```
 ```{R}
 #| echo: true
 ##Extended model Test
-inital.dum = prior.ex(data, p = 1)
+inital.dum = prior.ex(y, p = 1)
 XN <- inital.dum$XN
 YN <- inital.dum$YN
 
+X.ex <- rbind(XN, X)
+Y.ex <- rbind(YN, Y)
 
-
-priors.ext = calc.priors(p = 1, X = XN, Y = YN)
+priors.ext = calc.priors(p = 1, X = X.ex, Y = Y.ex)
 
 posteriors.ext = calc.posteriors(S = 1000, X = XN,Y=YN, priors = priors.ext)
 
@@ -417,15 +418,15 @@ posteriors.ext = calc.posteriors(S = 1000, X = XN,Y=YN, priors = priors.ext)
 
 A.posterior:
 ```{R}
-apply(posteriors.ext$A.posterior, 1:2, mean)
+round(apply(posteriors.ext$A.posterior, 1:2, mean),3)
 ```
 B.posterior:
 ```{R}
-apply(posteriors.ext$B.posterior, 1:2, mean)
+round(apply(posteriors.ext$B.posterior, 1:2, mean),3)
 ```
 Sigma.posterior:
 ```{R}
-apply(posteriors.ext$Sigma.posterior, 1:2, mean)
+round(apply(posteriors.ext$Sigma.posterior, 1:2, mean))
 ```
 ## Empirical Estimation
 
@@ -447,10 +448,12 @@ for (i in 1:p){
 A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
 Sigma.hat = diag(2)
 
+emp.initial.dum <- prior.ex(data = y, p = 2)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
 
-priors = calc.priors(p = 2,X = X, Y = Y)
-
-posteriors.emp = calc.posteriors(S = 1000, X = X, Y= Y, priors)
+priors.emp = calc.priors(p = 2, X = X.emp, Y = Y.emp)
+posteriors.emp = calc.posteriors(S = 1000, X = X, Y= Y, priors.emp)
 
 
 
@@ -458,15 +461,15 @@ posteriors.emp = calc.posteriors(S = 1000, X = X, Y= Y, priors)
 
 A.posterior:
 ```{R}
-apply(posteriors.emp$A.posterior, 1:2, mean)
+round(apply(posteriors.emp$A.posterior, 1:2, mean),3)
 ```
 B.posterior:
 ```{R}
-apply(posteriors.emp$B.posterior, 1:2, mean)
+round(apply(posteriors.emp$B.posterior, 1:2, mean),3)
 ```
 Sigma.posterior:
 ```{R}
-apply(posteriors.emp$Sigma.posterior, 1:2, mean)
+round(apply(posteriors.emp$Sigma.posterior, 1:2, mean),3)
 ```
 ## References {.unnumbered}
 
