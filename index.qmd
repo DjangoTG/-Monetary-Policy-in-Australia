@@ -344,76 +344,21 @@ for (s in 1:S){
 
 ```{R}
 #| echo: true
-p = 2
-prior.ex <- function(Y, X, p){
-  in.obvs.Y <- Y[1:p,]
+prior.ex <- function(data, p = 1, lambda_3 = 1, lambda_4 = 1){
   
-  N = ncol(Y)
+  N = ncol(data)
   M = (N*p)+1
-  gamma.3 = 1
-  Y.D <- matrix(nrow = N, ncol = N)
-  X.D <- matrix(nrow = N, ncol = M)
   
-  
-  
-  for (i in 1:N){
-    if(p == 1){
-      dum.i = in.obvs.Y[i]
-    }
-    else{dum.i = mean(in.obvs.Y[,i])}
-    for (j in 1:N){
-      if(i == j){
-        Y.D[j,i] = (dum.i/gamma.3)}
-      else{Y.D[j,i] = 0}
-      
-    }
+  in.obvs.Y <- matrix(data[1:p,], ncol = N)
+  y.bar     = colMeans(in.obvs.Y)
+    
+  Y_star    = rbind(diag(y.bar)/lambda_3, y.bar/lambda_4)
+  X_star    = as.matrix(c(rep(0, N), 1/lambda_4))
+  for (i in 1:p) {
+    X_star  = cbind(Y_star, X_star)
   }
   
-  for(i in 1:N){
-      for(s in 1:M){
-        if(p == 1){
-      dum.i = in.obvs.Y[i]
-    }
-    else{dum.i = mean(in.obvs.Y[,i])}
-        if(s == i & s < M){
-          X.D[i, s] = dum.i
-        }
-        else{X.D[i,s] = 0}
-        
-  }}
-  
-  
-  
-  
-  gamma.4 = 1
-  
-  Y.temp = matrix(ncol = N, nrow = 1)
-  X.temp = matrix(ncol = M, nrow = 1)
-  
-  for (i in 1:N){
-    if(p == 1){
-      dum.i = mean(in.obvs.Y[i])
-    }
-    else{dum.i = mean(in.obvs.Y[,i])}
-    
-    Y.temp[i] = dum.i/gamma.4}
-  
-  for (s in 1:M){
-    if(s<=N){
-    if(p == 1){
-      dum.s = mean(in.obvs.Y[s])}
-    else{
-      dum.s = mean(in.obvs.Y[,s])}
-        if(s < M){
-        X.temp[s] = dum.s/gamma.4}
-    }
-  else{X.temp[s] = 1/gamma.4}}
-  
-  Y.ex = rbind(Y.D, Y.temp)
-  X.ex = rbind(X.D, X.temp)
-  XN <- rbind(X.ex, X)
-  YN <- rbind(Y.ex, Y)
-  ext.data <- list(YN = YN, XN = XN)
+  ext.data <- list(YN = Y_star, XN = X_star)
   
   return(ext.data)
   
@@ -457,7 +402,7 @@ apply(posteriors$Sigma.posterior, 1:2, mean)
 ```{R}
 #| echo: true
 ##Extended model Test
-inital.dum = prior.ex(X = X, Y = Y, p = 1)
+inital.dum = prior.ex(data, p = 1)
 XN <- inital.dum$XN
 YN <- inital.dum$YN
 
