@@ -25,6 +25,9 @@ Plots below
 
 library(lubridate)
 library(xtable)
+library(mvtnorm)
+library(plot3D)
+library(HDInterval)
 
 ##Nominal GDP per capita
 real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
