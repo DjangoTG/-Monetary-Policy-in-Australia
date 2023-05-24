@@ -298,19 +298,6 @@ calc.priors <- function(p, X, Y){
 
 
 
-$$\begin{align}
-y_t &= \mu_0 + A_1 y_{t-1} + \dots + A_p y_{t-p} + \varepsilon_t\\
-\text{where }B_0^{-1}u_t &= \varepsilon_t| Y_{t-1} \sim _{iid} ( 0, \Sigma)\\
-\Sigma &= B_0^{-1}B_0^{-1'}
-\end{align}$$
-
-
-
-
-
-
-
-
 Using these priors and the function below, we can calculate posteriors $A$, $B$, and $\Sigma$
 
 ```{R }
