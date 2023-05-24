@@ -92,7 +92,7 @@ Below are plots of each of the available variables over time.
 
 dates <- as.Date(rownames(data),format = "%Y-%m-%d")
 
-units <- c("$ millions","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
+units <- c("","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
 
@@ -213,6 +213,17 @@ L(A,\Sigma|Y,X) \propto det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \l
 \end{gather}
 
 where:
+
+
+
+$$Y_t=\begin{pmatrix}  GDP_t &= \text{Real GDP}
+\\ CPI_t  &= \text{Consumer Price Index}
+\\ CRT_p  &= \text{Cash Rate Target GDP}
+\\ M1_t  &= \text{Money Supply}
+\\ UR_t  &= \text{State Specific Unemployment Rate}
+\end{pmatrix}$$
+
+
 \begin{gather}
 \hat{A} = (X'X)^{-1}X'Y
 \end{gather}
@@ -287,6 +298,12 @@ calc.priors <- function(p, X, Y){
 
 
 
+$$\begin{align}
+y_t &= \mu_0 + A_1 y_{t-1} + \dots + A_p y_{t-p} + \varepsilon_t\\
+\text{where }B_0^{-1}u_t &= \varepsilon_t| Y_{t-1} \sim _{iid} ( 0, \Sigma)\\
+\Sigma &= B_0^{-1}B_0^{-1'}
+\end{align}$$
+
 
 
 
@@ -300,7 +317,7 @@ Using these priors and the function below, we can calculate posteriors $A$, $B$,
 #| echo: true
 
 
-calc.posteriors <- function (S, X, Y, priors){
+calc.posteriors <- function (p, S, X, Y, priors){
   
   N = ncol(Y)
   A.prior <- priors$A.prior
@@ -325,16 +342,18 @@ Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
 A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
 L                 = t(chol(V.bar))
 B.posterior = array(NA, c(N,N,S))
-
+B1.posterior = array(NA,c(N,(1+N*p),S))
+  
 
 
 for (s in 1:S){
   chol.sigma = chol(Sigma.posterior[,,s])
   A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol.sigma
   B.posterior[,,s]= t(chol.sigma)
+  B1.posterior[,,s]= B.posterior[,,s]%*%t(A.posterior[,,s])
 }
   
-  posterior = list(A.posterior = A.posterior, B.posterior = B.posterior, Sigma.posterior = Sigma.posterior)
+  posterior = list(A.posterior = A.posterior, B.posterior = B.posterior, Sigma.posterior = Sigma.posterior, B1.posterior = B1.posterior)
   
   return(posterior)
 }
@@ -384,10 +403,10 @@ y = apply(matrix(rnorm(2000), ncol = 2), 2, cumsum)
 
 Y = y[2:1000,]
 X = cbind(1, y[1:999,])
-
+S = 1000
 priors = calc.priors(p = 1, X = X, Y = Y)
 
-posteriors = calc.posteriors(S = 1000, X = X, Y= Y, priors)
+posteriors = calc.posteriors(p = 1, S = 1000, X = X, Y= Y, priors)
 ```
 
 
@@ -415,7 +434,7 @@ Y.ex <- rbind(YN, Y)
 
 priors.ext = calc.priors(p = 1, X = X.ex, Y = Y.ex)
 
-posteriors.ext = calc.posteriors(S = 1000, X = XN,Y=YN, priors = priors.ext)
+posteriors.ext = calc.posteriors(p= 1,S = 1000, X = XN,Y=YN, priors = priors.ext)
 
 
 ```
@@ -457,7 +476,7 @@ X.emp <- rbind(emp.initial.dum$XN, X)
 Y.emp <- rbind(emp.initial.dum$YN, Y)
 
 priors.emp = calc.priors(p = 2, X = X.emp, Y = Y.emp)
-posteriors.emp = calc.posteriors(S = 1000, X = X, Y= Y, priors.emp)
+posteriors.emp = calc.posteriors(p = 2,S = 1000, X = X, Y= Y, priors.emp)
 
 
 
@@ -480,7 +499,80 @@ round(apply(posteriors.emp$Sigma.posterior, 1:2, mean),3)
 #IRFs
 A.posterior <- posteriors.emp$A.posterior
 B.posterior <- posteriors.emp$B.posterior
-h = 8
+
+SignRestrictions <- function(sign.restrictions, posteriors){
+  
+  A.posterior   = posteriors$A.posterior
+  B.posterior = posteriors$B.posterior
+  B1.posterior = posteriors$B1.posterior
+  Sigma.posterior = posteriors$Sigma.posterior
+  
+  S = dim(A.posterior)[3]
+  N = dim(B.posterior)[1]
+  p = (dim(B1.posterior)[2]-1)/N
+  
+  R1            = diag(sign.restrictions)
+  B0.draws      = array(NA,c(N,N,S))
+  B1.draws      = array(NA,c(N,(1+N*p),S))
+  pb = txtProgressBar(min = 0, max = S, initial = 0)
+for (s in 1:S){
+  
+  setTxtProgressBar(pb, s)
+  
+  B0.tilde <-B.posterior[,,s]
+  B1.tilde <-  B1.posterior[,,s]
+  A <- A.posterior[,,s]
+  Sigma <- Sigma.posterior[,,s]
+  
+  sign.restrictions.do.not.hold = TRUE
+
+  i=1
+  
+  while (sign.restrictions.do.not.hold){
+    X           = matrix(rnorm(N*N),N,N)
+    QR          = qr(X, tol = 1e-10)
+    Q           = qr.Q(QR,complete=TRUE)
+    R           = qr.R(QR,complete=TRUE)
+    Q           = t(Q %*% diag(sign(diag(R))))
+    B0          = Q%*%B0.tilde 
+    B0.inv      = solve(B0) 
+    # check       = prod(R1 %*% B0.inv %*% diag(N)[,1] > 0) # Check reponse at time 0
+    check       = prod(R1 %*% B0.inv %*% diag(N)[,1] >= 0)
+    
+    
+    if (check==1){sign.restrictions.do.not.hold=FALSE}
+    i=i+1
+  }
+  B1            = Q%*%B1.tilde 
+  B0.draws[,,s] = B0
+  B1.draws[,,s] = B1
+
+}
+  draws = list(B0.draws = B0.draws,B1.draws = B1.draws,i = i)
+  return (draws)
+}
+  
+sign.restictions = c(1,1,-1,1,-1)
+posteriors = posteriors.emp
+draws.emp <- SignRestrictions(sign.restictions, posteriors = posteriors.emp)
+
+B0.draws = draws.emp$B0.draws
+B1.draws = draws.emp$B1.draws
+
+A.posterior <- array(NA,c(N*p+1,N,S))
+B.posterior       = array(NA,c(N,N,S))
+S.check <- array(NA,c(N,N,S))
+
+for (s in 1:S){
+  #A.posterior[,,s] <- t(B1.draws[,,s]) %*% B0.draws[,,s]
+  #B.posterior[,,s] <- solve(B0.draws[,,s])
+}
+
+
+
+
+
+h = 20
 S = 1000
 N = ncol(Y)
 IRF.posterior     = array(NA,c(N,N,h+1,S))
@@ -491,12 +583,13 @@ J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
 for (s in 1:S){
   A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
   IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
   A.bold.power    = A.bold
   for (i in 1:(h+1)){
     if (i==1){
       IRF.posterior[,,i,s]        = B.posterior[,,s]
     } else {
-      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% IRF.posterior[,,i-1,s]
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
       A.bold.power                = A.bold.power %*% A.bold
     }
     for (n in 1:N){
@@ -508,6 +601,9 @@ for (s in 1:S){
   }
 }
 FEVD.posterior    = 100*FEVD.posterior
+
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
 save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
 load("irf-fevd-k1.RData")
 
@@ -535,6 +631,8 @@ for (n in 1:5){
   abline(h=0)
   lines(hh, IRFs.k1[n,hh],lwd=2)
 }
+
+
 
 
 
