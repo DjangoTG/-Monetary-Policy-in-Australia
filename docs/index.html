@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Django Trueman-Greinke">
+
+<title>Macroeconometrics Research Report - Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Macroeconometrics Research Report</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#preliminary-results" id="toc-preliminary-results" class="nav-link" data-scroll-target="#preliminary-results">Preliminary Results</a>
+  <ul class="collapse">
+  <li><a href="#acf-and-pacf-plots" id="toc-acf-and-pacf-plots" class="nav-link" data-scroll-target="#acf-and-pacf-plots">ACF and PACF plots</a></li>
+  </ul></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
+  <li><a href="#modelling-framework" id="toc-modelling-framework" class="nav-link" data-scroll-target="#modelling-framework">Modelling Framework</a>
+  <ul class="collapse">
+  <li><a href="#basic-model" id="toc-basic-model" class="nav-link" data-scroll-target="#basic-model">Basic Model</a></li>
+  <li><a href="#extended-model-formulation" id="toc-extended-model-formulation" class="nav-link" data-scroll-target="#extended-model-formulation">Extended model formulation</a></li>
+  <li><a href="#reproduction-for-artificial-data" id="toc-reproduction-for-artificial-data" class="nav-link" data-scroll-target="#reproduction-for-artificial-data">Reproduction for artificial data</a></li>
+  <li><a href="#empirical-estimation" id="toc-empirical-estimation" class="nav-link" data-scroll-target="#empirical-estimation">Empirical Estimation</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Django Trueman-Greinke </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<blockquote class="blockquote">
+<p><strong>Abstract.</strong> Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p><strong>Keywords.</strong> Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia # Introduction</p>
+</blockquote>
+<p>Intro in progress</p>
+<p>Plots below</p>
+<section id="data" class="level1">
+<h1>Data</h1>
+<div class="cell">
+
+</div>
+<p>The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.</p>
+<p>Below are plots of each of the available variables over time.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/plots-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/plots-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="preliminary-results" class="level1">
+<h1>Preliminary Results</h1>
+<section id="acf-and-pacf-plots" class="level2">
+<h2 class="anchored" data-anchor-id="acf-and-pacf-plots">ACF and PACF plots</h2>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/(P)ACF plots-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/(P)ACF plots-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/(P)ACF plots-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/(P)ACF plots-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>##Integration order verification</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                              Variable Lag.Order ADF.Statistic   p.value
+1                        Log(Real GDP)         4    -0.7525317 0.9635359
+2     First Diff: Consumer Price Index         4    -1.7942981 0.6620412
+3                     Cash Rate Target         4    -4.8673605 0.0100000
+4                         Money Supply         4    -1.0831417 0.9218481
+5        Unemployment Rate: Queensland         4    -1.8629808 0.6334799
+6   Unemployment Rate: New South Wales         4    -2.8242561 0.2337397
+7          Unemployment Rate: Victoria         4    -2.1288883 0.5229040
+8 Unemployment Rate: Western Australia         4    -2.0415440 0.5592256</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                              Variable Lag.Order     ADF.Statistic
+1                        Log(Real GDP)         3 -7.56973803890392
+2     First Diff: Consumer Price Index         3 -9.80351441670259
+3                     Cash Rate Target       N/A               N/A
+4                         Money Supply         3  -3.3534305304591
+5        Unemployment Rate: Queensland         3 -6.54720362988815
+6   Unemployment Rate: New South Wales         3 -5.26681334164472
+7          Unemployment Rate: Victoria         3 -6.57502342373225
+8 Unemployment Rate: Western Australia         3 -6.95240168751401
+            p.value
+1              0.01
+2              0.01
+3               N/A
+4 0.065428244923483
+5              0.01
+6              0.01
+7              0.01
+8              0.01</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                              Variable Lag.Order    ADF.Statistic p.value
+1                        Log(Real GDP)       N/A              N/A     N/A
+2     First Diff: Consumer Price Index       N/A              N/A     N/A
+3                     Cash Rate Target       N/A              N/A     N/A
+4                         Money Supply         3 -5.8300171259421    0.01
+5        Unemployment Rate: Queensland       N/A              N/A     N/A
+6   Unemployment Rate: New South Wales       N/A              N/A     N/A
+7          Unemployment Rate: Victoria       N/A              N/A     N/A
+8 Unemployment Rate: Western Australia       N/A              N/A     N/A</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="methodology" class="level1">
+<h1>Methodology</h1>
+<p>Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.</p>
+<p><span class="math display">\[\begin{align}
+B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
+\end{align}\]</span> <span class="math display">\[\begin{align}
+u_t|Y_{t-1}~iid(0_N,I_N)
+\end{align}\]</span></p>
+<p>Where:</p>
+<p><span class="math inline">\(Y_{t}\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of endogenous variables, including the Gini coefficient, government spending, revenue, GDP, and debt.</p>
+<p><span class="math inline">\(B_0\)</span> is an <span class="math inline">\(N \times N\)</span> structural matrix capturing comtemporaneous relationships between variables.</p>
+<p><span class="math inline">\(u_t\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of independent structural shocks, conditional on <span class="math inline">\(Y_{t-1}\)</span>.</p>
+<p>Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.</p>
+<p>Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.</p>
+</section>
+<section id="modelling-framework" class="level1">
+<h1>Modelling Framework</h1>
+<section id="basic-model" class="level2">
+<h2 class="anchored" data-anchor-id="basic-model">Basic Model</h2>
+<p>Starting with the reduced form, we can present the likelihood function as a normal-inverse Wishart distribution for <span class="math inline">\((A,\Sigma)\)</span></p>
+<p><span class="math display">\[\begin{gather}
+Y = XA + E \\
+\\ E|X \sim MN_{T \times N}(0_{T \times N},\Sigma,I_T)
+\end{gather}\]</span></p>
+<p><span class="math display">\[\begin{gather}
+L(A,\Sigma|Y,X) \propto det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(Y-XA)'(Y-XA) \right] \right\} \\
+\\ = det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(A-\hat{A})'X'X(A-\hat{A}) \right] \right\} exp \left\{-\frac{1}{2} tr \left[\Sigma^{-1}(Y-X \hat{A})'(Y-X \hat{A}) \right] \right\} \\
+\end{gather}\]</span></p>
+<p>where:</p>
+<p><span class="math display">\[Y_t=\begin{pmatrix}  GDP_t &amp;= \text{Real GDP}
+\\ CPI_t  &amp;= \text{Consumer Price Index}
+\\ CRT_p  &amp;= \text{Cash Rate Target GDP}
+\\ M1_t  &amp;= \text{Money Supply}
+\\ UR_t  &amp;= \text{State Specific Unemployment Rate}
+\end{pmatrix}\]</span></p>
+<p><span class="math display">\[\begin{gather}
+\hat{A} = (X'X)^{-1}X'Y
+\end{gather}\]</span></p>
+<p>Hence:</p>
+<p><span class="math display">\[\begin{gather}
+L(A,\Sigma|Y,X) = NIW_{K\times N}(\hat{A}, (X'X)^{-1},(Y-X\hat{A})'(Y-X\hat{A}), T-N-K)
+\end{gather}\]</span></p>
+<p>This leads to joint prior distribution for <span class="math inline">\((A, \Sigma)\)</span> of the same form:</p>
+<p><span class="math display">\[\begin{gather}
+
+p(A,\Sigma) = p(A|\Sigma) p(\Sigma) \\
+A|\Sigma \sim MN_{K \times N} (\underline{A}, \Sigma , \underline{V}) \\
+\Sigma \sim IW_{N}(\underline{S},\underline{\nu})
+\end{gather}\]</span></p>
+<p>The full conditional posterior is, therefore, given by:</p>
+<p><span class="math display">\[\begin{gather}
+p(A,\Sigma |Y, X) = p(A|Y, X, \Sigma) p(\Sigma|Y,X) \\
+p(A|Y,X,\Sigma) = MN_{K \times N} (\bar{A}, \Sigma , \bar{V}) \\
+p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
+\end{gather}\]</span></p>
+<p>with parameters:</p>
+<p><span class="math display">\[\begin{gather}
+\bar{V} = (X^{'}X+ \underline{V}^{-1})^{-1} \\
+\\ \bar{A} = \bar{V}(X^{'}Y+\underline{V}^{-1} \underline{A}) \\
+\\ \bar{\nu} = T + \underline{\nu} \\
+\\ \bar{S} = \underline{S} + Y^{'}Y +  \underline{A}^{'}\underline{V}^{-1}\underline{A} - \bar{A}^{'}\bar{V}^{-1}\bar{A}
+\end{gather}\]</span></p>
+<p>The following function uses the Minnesota prior to set priors for <span class="math inline">\(V\)</span>, <span class="math inline">\(A\)</span>, <span class="math inline">\(\nu,\)</span> and <span class="math inline">\(S\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>calc.priors <span class="ot">&lt;-</span> <span class="cf">function</span>(p, X, Y){</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  Sigma.hat <span class="ot">=</span> <span class="fu">t</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A.hat)<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A.hat)<span class="sc">/</span>T</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Setting Kappas</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  kappa<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fl">0.02</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  kappa<span class="fl">.2</span> <span class="ot">&lt;-</span><span class="dv">100</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  K <span class="ot">=</span> <span class="dv">1</span> <span class="sc">+</span> (p<span class="sc">*</span>N)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  A.prior     <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(A.hat),<span class="fu">ncol</span>(A.hat))</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  A.prior[<span class="dv">2</span><span class="sc">:</span>(N<span class="sc">+</span><span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  V.prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa<span class="fl">.2</span>,kappa<span class="fl">.1</span><span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  S.prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">diag</span>(Sigma.hat))</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  nu.prior    <span class="ot">=</span> N<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  priors <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">A.prior =</span> A.prior , <span class="at">V.prior=</span>V.prior, <span class="at">S.prior=</span>S.prior, <span class="at">nu.prior=</span>nu.prior)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(priors)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Using these priors and the function below, we can calculate posteriors <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, and <span class="math inline">\(\Sigma\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>calc.posteriors <span class="ot">&lt;-</span> <span class="cf">function</span> (p, S, X, Y, priors){</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  A.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>A.prior</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  V.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>V.prior</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  S.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>S.prior</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  nu.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>nu.prior</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  V.bar.inv   <span class="ot">=</span> (<span class="fu">t</span>(X)<span class="sc">%*%</span>X) <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  V.bar       <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  A.bar       <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  nu.bar      <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  S.bar       <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  S.bar.inv   <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  Sigma.posterior.inv   <span class="ot">=</span> <span class="fu">rWishart</span>(S, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior.inv,<span class="dv">3</span>,solve)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>L                 <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>B.posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="fu">c</span>(N,N,S))</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>B1.posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>,<span class="fu">c</span>(N,(<span class="dv">1</span><span class="sc">+</span>N<span class="sc">*</span>p),S))</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  chol.sigma <span class="ot">=</span> <span class="fu">chol</span>(Sigma.posterior[,,s])</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  A.posterior[,,s]<span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span>chol.sigma</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  B.posterior[,,s]<span class="ot">=</span> <span class="fu">t</span>(chol.sigma)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  B1.posterior[,,s]<span class="ot">=</span> B.posterior[,,s]<span class="sc">%*%</span><span class="fu">t</span>(A.posterior[,,s])</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  posterior <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior =</span> A.posterior, <span class="at">B.posterior =</span> B.posterior, <span class="at">Sigma.posterior =</span> Sigma.posterior, <span class="at">B1.posterior =</span> B1.posterior)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(posterior)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="extended-model-formulation" class="level2">
+<h2 class="anchored" data-anchor-id="extended-model-formulation">Extended model formulation</h2>
+<p>In the extended model I augment the system using the ‘sum of coefficients’ and ‘dummy initial observation’ prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.</p>
+<p>The ‘dummy initial observation’ prior adds a single dummy observation such that all values are set equal to the averages of intial conditions, up to a scaling factor.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prior.ex <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">lambda_3 =</span> <span class="dv">1</span>, <span class="at">lambda_4 =</span> <span class="dv">1</span>){</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">=</span> (N<span class="sc">*</span>p)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  in.obvs.Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(data[<span class="dv">1</span><span class="sc">:</span>p,], <span class="at">ncol =</span> N)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  y.bar     <span class="ot">=</span> <span class="fu">colMeans</span>(in.obvs.Y)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  Y_star    <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">diag</span>(y.bar)<span class="sc">/</span>lambda_3, y.bar<span class="sc">/</span>lambda_4)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  X_star    <span class="ot">=</span> <span class="fu">as.matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, N), <span class="dv">1</span><span class="sc">/</span>lambda_4))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    X_star  <span class="ot">=</span> <span class="fu">cbind</span>(Y_star, X_star)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  ext.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">YN =</span> Y_star, <span class="at">XN =</span> X_star)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ext.data)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="reproduction-for-artificial-data" class="level2">
+<h2 class="anchored" data-anchor-id="reproduction-for-artificial-data">Reproduction for artificial data</h2>
+<p>The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Basic Model Test</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">apply</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">ncol =</span> <span class="dv">2</span>), <span class="dv">2</span>, cumsum)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> y[<span class="dv">2</span><span class="sc">:</span><span class="dv">1000</span>,]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, y[<span class="dv">1</span><span class="sc">:</span><span class="dv">999</span>,])</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X, <span class="at">Y =</span> Y)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>posteriors <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X, <span class="at">Y=</span> Y, priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]
+[1,] -0.180  0.260
+[2,]  0.994 -0.002
+[3,]  0.003  0.989</code></pre>
+</div>
+</div>
+<p>B.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 1.421 0.000
+[2,] 0.006 1.416</code></pre>
+</div>
+</div>
+<p>Sigma.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]  [,2]
+[1,] 2.020 0.008
+[2,] 0.008 2.008</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Extended model Test</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>inital.dum <span class="ot">=</span> <span class="fu">prior.ex</span>(y, <span class="at">p =</span> <span class="dv">1</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>XN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>XN</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>YN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>YN</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>X.ex <span class="ot">&lt;-</span> <span class="fu">rbind</span>(XN, X)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Y.ex <span class="ot">&lt;-</span> <span class="fu">rbind</span>(YN, Y)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>priors.ext <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X.ex, <span class="at">Y =</span> Y.ex)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>posteriors.ext <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p=</span> <span class="dv">1</span>,<span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> XN,<span class="at">Y=</span>YN, <span class="at">priors =</span> priors.ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      [,1]   [,2]
+[1,] 1.439  1.142
+[2,] 0.992 -0.018
+[3,] 0.016  0.996</code></pre>
+</div>
+</div>
+<p>B.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]
+[1,] 17.521  0.000
+[2,]  0.622 14.839</code></pre>
+</div>
+</div>
+<p>Sigma.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]  379   19
+[2,]   19  382</code></pre>
+</div>
+</div>
+</section>
+<section id="empirical-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="empirical-estimation">Empirical Estimation</h2>
+<div class="cell">
+
+</div>
+<p>A.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]   [,3]   [,4]   [,5]
+ [1,] 0.009  0.018 -0.034  1.359 -0.082
+ [2,] 1.000  0.000  0.000  0.009  0.000
+ [3,] 0.000  0.989  0.002 -0.042  0.001
+ [4,] 0.000 -0.002  0.998 -0.119  0.003
+ [5,] 0.000  0.001 -0.003  1.287 -0.001
+ [6,] 0.000  0.001 -0.002  0.071  0.995
+ [7,] 0.000  0.000  0.000  0.000  0.000
+ [8,] 0.000  0.000  0.000 -0.028  0.000
+ [9,] 0.000  0.000 -0.001 -0.013  0.001
+[10,] 0.000  0.001  0.002 -0.063  0.000
+[11,] 0.000  0.000  0.000  0.012 -0.001
+[12,] 0.000  0.000  0.000  0.003  0.000
+[13,] 0.000  0.000  0.000  0.000  0.000
+[14,] 0.000  0.000 -0.001 -0.001  0.000
+[15,] 0.000 -0.003  0.003 -0.166  0.001
+[16,] 0.000  0.000  0.000  0.009  0.000
+[17,] 0.000  0.000  0.000 -0.004  0.000
+[18,] 0.000  0.000  0.000  0.001  0.000
+[19,] 0.000  0.000  0.000 -0.002  0.000
+[20,] 0.000  0.004  0.001 -0.047 -0.004
+[21,] 0.000  0.000  0.000  0.004  0.000
+[22,] 0.000  0.000  0.000  0.000  0.000
+[23,] 0.000  0.000  0.000  0.001  0.000
+[24,] 0.000  0.000  0.000 -0.004  0.000
+[25,] 0.000 -0.002 -0.001 -0.051  0.000
+[26,] 0.000  0.000  0.000  0.006  0.000
+[27,] 0.000  0.000  0.000  0.000  0.000
+[28,] 0.000  0.000  0.000  0.001  0.000
+[29,] 0.000  0.000  0.000 -0.004  0.000
+[30,] 0.000 -0.001  0.000  0.011  0.001
+[31,] 0.000  0.000  0.000 -0.001  0.000
+[32,] 0.000  0.000  0.000  0.001  0.000
+[33,] 0.000  0.000  0.000  0.001  0.000
+[34,] 0.000  0.000  0.000 -0.004  0.000
+[35,] 0.000  0.001  0.000  0.018  0.001
+[36,] 0.000  0.000  0.000  0.002  0.000
+[37,] 0.000  0.000  0.000  0.000  0.000
+[38,] 0.000  0.000  0.000 -0.002  0.000
+[39,] 0.000  0.000  0.000  0.001  0.000
+[40,] 0.000  0.000  0.000  0.010  0.001
+[41,] 0.000  0.000  0.000 -0.001  0.000
+[42,] 0.000  0.000  0.000 -0.002  0.000
+[43,] 0.000  0.000  0.000  0.000  0.000
+[44,] 0.000  0.000  0.000  0.001  0.000
+[45,] 0.000  0.000  0.000 -0.007  0.000
+[46,] 0.000  0.000  0.000 -0.001  0.000
+[47,] 0.000  0.000  0.000  0.000  0.000
+[48,] 0.000  0.000  0.000  0.000  0.000
+[49,] 0.000  0.000  0.000 -0.002  0.000
+[50,] 0.000  0.000 -0.001  0.021  0.001
+[51,] 0.000  0.000  0.000 -0.001  0.000</code></pre>
+</div>
+</div>
+<p>B.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]   [,3]   [,4]  [,5]
+[1,]  0.010  0.000  0.000  0.000 0.000
+[2,]  0.225  0.616  0.000  0.000 0.000
+[3,]  0.027  0.029  0.434  0.000 0.000
+[4,] -2.477 -0.495 -4.852 16.767 0.000
+[5,] -0.176 -0.018 -0.065  0.015 0.383</code></pre>
+</div>
+</div>
+<p>Sigma.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]   [,3]    [,4]   [,5]
+[1,]  0.000  0.002  0.000  -0.025 -0.002
+[2,]  0.002  0.435  0.024  -0.857 -0.051
+[3,]  0.000  0.024  0.194  -2.226 -0.034
+[4,] -0.025 -0.857 -2.226 320.040  1.029
+[5,] -0.002 -0.051 -0.034   1.029  0.188</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -199,7 +199,10 @@ Using this model I will give me an insight into dynamic relationships between go
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
 
 
-## Estimation Framework
+# Modelling Framework
+
+## Basic Model
+
 Starting with the reduced form, we can present the likelihood function as a normal-inverse Wishart distribution for $(A,\Sigma)$
 
 \begin{gather}
@@ -265,7 +268,8 @@ with parameters:
 The following function uses the Minnesota prior to set priors for $V$, $A$, $\nu,$ and $S$
 ```{R - Setting Priors}
 #| echo: true
-
+#| message: false
+#| warning: false
 
 calc.priors <- function(p, X, Y){
   
@@ -302,7 +306,8 @@ Using these priors and the function below, we can calculate posteriors $A$, $B$,
 
 ```{R }
 #| echo: true
-
+#| message: false
+#| warning: false
 
 calc.posteriors <- function (p, S, X, Y, priors){
   
@@ -351,6 +356,10 @@ for (s in 1:S){
 ```
 
 ## Extended model formulation
+
+In the extended model I augment the system using the 'sum of coefficients' and 'dummy initial observation' prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.
+
+The 'dummy initial observation' prior adds a single dummy observation such that all values are set equal to the averages of intial conditions, up to a scaling factor.
 
 ```{R}
 #| echo: true
@@ -444,7 +453,7 @@ round(apply(posteriors.ext$Sigma.posterior, 1:2, mean))
 ##Create Y and X
 
 
-p = 2
+p = 10
 y = ts(data[c(1:4, 5)])
 T = nrow(y)
 Y = y[(p+1):T,]
@@ -458,12 +467,12 @@ for (i in 1:p){
 A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
 Sigma.hat = diag(2)
 
-emp.initial.dum <- prior.ex(data = y, p = 2)
+emp.initial.dum <- prior.ex(data = y, p = 10)
 X.emp <- rbind(emp.initial.dum$XN, X)
 Y.emp <- rbind(emp.initial.dum$YN, Y)
 
-priors.emp = calc.priors(p = 2, X = X.emp, Y = Y.emp)
-posteriors.emp = calc.posteriors(p = 2,S = 1000, X = X, Y= Y, priors.emp)
+priors.emp = calc.priors(p = 10, X = X.emp, Y = Y.emp)
+posteriors.emp = calc.posteriors(p = 10,S = 1000, X = X, Y= Y, priors.emp)
 
 
 
@@ -487,73 +496,73 @@ round(apply(posteriors.emp$Sigma.posterior, 1:2, mean),3)
 A.posterior <- posteriors.emp$A.posterior
 B.posterior <- posteriors.emp$B.posterior
 
-SignRestrictions <- function(sign.restrictions, posteriors){
-  
-  A.posterior   = posteriors$A.posterior
-  B.posterior = posteriors$B.posterior
-  B1.posterior = posteriors$B1.posterior
-  Sigma.posterior = posteriors$Sigma.posterior
-  
-  S = dim(A.posterior)[3]
-  N = dim(B.posterior)[1]
-  p = (dim(B1.posterior)[2]-1)/N
-  
-  R1            = diag(sign.restrictions)
-  B0.draws      = array(NA,c(N,N,S))
-  B1.draws      = array(NA,c(N,(1+N*p),S))
-  pb = txtProgressBar(min = 0, max = S, initial = 0)
-for (s in 1:S){
-  
-  setTxtProgressBar(pb, s)
-  
-  B0.tilde <-B.posterior[,,s]
-  B1.tilde <-  B1.posterior[,,s]
-  A <- A.posterior[,,s]
-  Sigma <- Sigma.posterior[,,s]
-  
-  sign.restrictions.do.not.hold = TRUE
-
-  i=1
-  
-  while (sign.restrictions.do.not.hold){
-    X           = matrix(rnorm(N*N),N,N)
-    QR          = qr(X, tol = 1e-10)
-    Q           = qr.Q(QR,complete=TRUE)
-    R           = qr.R(QR,complete=TRUE)
-    Q           = t(Q %*% diag(sign(diag(R))))
-    B0          = Q%*%B0.tilde 
-    B0.inv      = solve(B0) 
-    # check       = prod(R1 %*% B0.inv %*% diag(N)[,1] > 0) # Check reponse at time 0
-    check       = prod(R1 %*% B0.inv %*% diag(N)[,1] >= 0)
+#SignRestrictions <- function(sign.restrictions, posteriors){
+  #
+  #A.posterior   = posteriors$A.posterior
+  #B.posterior = posteriors$B.posterior
+  #B1.posterior = posteriors$B1.posterior
+  #Sigma.posterior = posteriors$Sigma.posterior
+#  
+#  S = dim(A.posterior)[3]
+#  N = dim(B.posterior)[1]
+#  p = (dim(B1.posterior)[2]-1)/N
+#  
+#  R1            = diag(sign.restrictions)
+#  B0.draws      = array(NA,c(N,N,S))
+#  B1.draws      = array(NA,c(N,(1+N*p),S))
+#  pb = txtProgressBar(min = 0, max = S, initial = 0)
+#for (s in 1:S){
+#  
+#  setTxtProgressBar(pb, s)
+#  
+#  B0.tilde <-B.posterior[,,s]
+#  B1.tilde <-  B1.posterior[,,s]
+#  A <- A.posterior[,,s]
+#  Sigma <- Sigma.posterior[,,s]
+ ### 
+  #sign.restrictions.do.not.hold = TRUE
+#
+ # i=1
+#  
+#  while (sign.restrictions.do.not.hold){
+#    X           = matrix(rnorm(N*N),N,N)
+#    QR          = qr(X, tol = 1e-10)
+#    Q           = qr.Q(QR,complete=TRUE)
+#    R           = qr.R(QR,complete=TRUE)
+#    Q           = t(Q %*% diag(sign(diag(R))))
+#    B0          = Q%*%B0.tilde 
+#    B0.inv      = solve(B0) 
+#    # check       = prod(R1 %*% B0.inv %*% diag(N)[,1] > 0) # Check #reponse at time 0
+#    check       = prod(R1 %*% B0.inv %*% diag(N)[,1] >= 0)
+#    
     
-    
-    if (check==1){sign.restrictions.do.not.hold=FALSE}
-    i=i+1
-  }
-  B1            = Q%*%B1.tilde 
-  B0.draws[,,s] = B0
-  B1.draws[,,s] = B1
+#    if (check==1){sign.restrictions.do.not.hold=FALSE}
+#    i=i+1
+#  }
+#  B1            = Q%*%B1.tilde 
+#  B0.draws[,,s] = B0
+#  B1.draws[,,s] = B1#
 
-}
-  draws = list(B0.draws = B0.draws,B1.draws = B1.draws,i = i)
-  return (draws)
-}
-  
-sign.restictions = c(1,1,-1,1,-1)
-posteriors = posteriors.emp
-draws.emp <- SignRestrictions(sign.restictions, posteriors = posteriors.emp)
+#}
+#  draws = list(B0.draws = B0.draws,B1.draws = B1.draws,i = i)
+#  return (draws)
+#}
+#  
+#sign.restictions = c(1,1,-1,1,-1)
+#posteriors = posteriors.emp
+#draws.emp <- SignRestrictions(sign.restictions, posteriors = posteriors.emp)
 
-B0.draws = draws.emp$B0.draws
-B1.draws = draws.emp$B1.draws
+#B0.draws = draws.emp$B0.draws
+#B1.draws = draws.emp$B1.draws
 
-A.posterior <- array(NA,c(N*p+1,N,S))
-B.posterior       = array(NA,c(N,N,S))
-S.check <- array(NA,c(N,N,S))
+#A.posterior <- array(NA,c(N*p+1,N,S))
+#B.posterior       = array(NA,c(N,N,S))
+#S.check <- array(NA,c(N,N,S))
 
-for (s in 1:S){
+#for (s in 1:S){
   #A.posterior[,,s] <- t(B1.draws[,,s]) %*% B0.draws[,,s]
   #B.posterior[,,s] <- solve(B0.draws[,,s])
-}
+#}
 
 
 
