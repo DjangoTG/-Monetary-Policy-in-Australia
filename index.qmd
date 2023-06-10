@@ -205,13 +205,11 @@ rmarkdown::paged_table(results.adf2)
 
 Below is the Structural Vector Autoregression (SVAR) model required to capture the dynamics between the variables.
 
-
 \begin{align}
 B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
 \end{align} \begin{align}
 u_t|Y_{t-1}~iid(0_N,I_N)
 \end{align}
-
 
 Where:
 
@@ -221,7 +219,7 @@ $B_0$ is an $N \times N$ structural matrix capturing comtemporaneous relationshi
 
 $u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on $Y_{t-1}$.
 
-Using this model will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions (IRFs) and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
+Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
 
 Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
 
@@ -356,26 +354,29 @@ calc.posteriors <- function (p, S, X, Y, priors){
  
   
   Sigma.posterior.inv   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
-  Sigma.posterior   = apply(Sigma.posterior.inv,3,solve)
-  Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
-  A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
-  L                 = t(chol(V.bar))
-  B.posterior = array(NA, c(N,N,S))
-  B1.posterior = array(NA,c(N,(1+N*p),S))
+Sigma.posterior   = apply(Sigma.posterior.inv,3,solve)
+Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
+A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
+L                 = t(chol(V.bar))
+B.posterior = array(NA, c(N,N,S))
+B1.posterior = array(NA,c(N,(1+N*p),S))
   
 
 
-  for (s in 1:S){
-    chol.sigma = chol(Sigma.posterior[,,s])
-    A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol.sigma
-    B.posterior[,,s]= t(chol.sigma)
-    B1.posterior[,,s]= B.posterior[,,s]%*%t(A.posterior[,,s])
-  }
+for (s in 1:S){
+  chol.sigma = chol(Sigma.posterior[,,s])
+  A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol.sigma
+  B.posterior[,,s]= t(chol.sigma)
+  B1.posterior[,,s]= B.posterior[,,s]%*%t(A.posterior[,,s])
+}
   
   posterior = list(A.posterior = A.posterior, B.posterior = B.posterior, Sigma.posterior = Sigma.posterior, B1.posterior = B1.posterior)
   
   return(posterior)
 }
+
+
+
 
 ```
 
@@ -405,7 +406,9 @@ prior.ex <- function(data, p = 1, lambda_3 = 1, lambda_4 = 1){
   
   return(ext.data)
   
+  
 }
+
 
 ```
 
@@ -619,27 +622,21 @@ for (s in 1:S){
   }
 }
 FEVD.posterior    = 100*FEVD.posterior
-```
 
 
-```{r save irf_fevd}
 # save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
 save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
-```
-
-
-```{r load irf_fevd}
 load("irf-fevd-k1.RData")
-```
 
-### IRFs
-```{r plot IRFs}
+
+
 IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
 IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
 rownames(IRFs.k1) = colnames(Y)
 
 IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
 hh          = 1:5
+
 
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
 for (n in 1:5){
@@ -656,29 +653,11 @@ for (n in 1:5){
   lines(hh, IRFs.k1[n,hh],lwd=2)
 }
 
-```
 
 
-### FEVD
-```{r}
-hh            = 1:(h+1)
-fevd.unemQ  = apply(FEVD.posterior[5,,,],1:2,mean)
-fevd.unemQ  = rbind(rep(0,h+1),apply(fevd.unemQ,2,cumsum))
 
-# fevd.au.p     = apply(FEVD.posterior[9,,,],1:2,mean)
-# fevd.au.p     = rbind(rep(0,h+1),apply(fevd.au.p,2,cumsum))
 
-colors = c("deepskyblue1","deepskyblue2","deepskyblue","deepskyblue3","deepskyblue4","dodgerblue",
-           "maroon1","maroon","maroon2","magenta","maroon3","maroon4")
 
-par(mar=rep(4,4),cex.axis=1, cex.lab=0.8)
-plot(hh,fevd.unemQ[1,], type="n", ylim=c(0,100), axes=FALSE, xlab="", ylab="")
-axis(1,c(1,2,5,7,9,13,17),c("","1 quarter","1 year","6 quarters", "2 years", "3 years", "4 years"))
-axis(2,c(0,50,100),c("","FEVD[unem.Q]",""))
-for (n in 1:N){
-  polygon(c(hh,(h+1):1), c(fevd.unemQ[n,hh],fevd.unemQ[n+1,(h+1):1]), col=colors[n],border=colors[n])
-}
-axis(4, (0.5*(fevd.unemQ[(1:N),(h+1)]+fevd.unemQ[2:(N+1),(h+1)]))[c(4,5)], c("au.mps","unem.Q"))
 
 ```
 
