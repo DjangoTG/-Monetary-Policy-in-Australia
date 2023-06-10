@@ -1,5 +1,5 @@
 ---
-title: "Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis"
+title: "Examining the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis"
 author: "Django Trueman-Greinke"
 
 execute:
@@ -10,7 +10,9 @@ bibliography: references.bib
 
 > **Abstract.** Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.
 
-> **Keywords.** Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia \# Introduction
+> **Keywords.** Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia 
+
+# Introduction
 
 Intro in progress
 
@@ -18,16 +20,23 @@ Plots below
 
 # Data
 
-```{r Data}
-#| echo: false
-#| message: false
+```{r load packages}
 #| warning: false
-
 library(lubridate)
 library(xtable)
 library(mvtnorm)
 library(plot3D)
 library(HDInterval)
+```
+
+
+```{r Data}
+#| echo: false
+#| eval: false
+#| message: false
+#| warning: false
+
+# I have put eval=False above as I do not want to run this chunk each time. I use the next chunk to save this data and load data using the third chunk for computational speed and to avoid data extraction errors
 
 ##Nominal GDP per capita
 real.gdp <- readrba::read_rba(series_id = "GGDPCVGDP") 
@@ -81,6 +90,18 @@ colnames(data) <- names
 
 ```
 
+```{r save data}
+#| eval: false
+# Save data here so that you do not have pull data from ABS each time you run
+save.image(file = "ProjectData.RData")
+```
+
+```{r load data}
+#| eval: true
+load(file = "ProjectData.RData")
+```
+
+
 The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.
 
 Below are plots of each of the available variables over time.
@@ -95,7 +116,8 @@ dates <- as.Date(rownames(data),format = "%Y-%m-%d")
 units <- c("","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
-
+#alternative margins for figures
+# par(mfrow=c(4,2), mar=c(2,2,2,2))
 for (i in 1:8){
   plot(dates, y=data[,i], main = paste(names[i]), ylab = paste(units[i]),xlab = "Date",type = "l",col = "blue",lwd = 2)
   
@@ -119,7 +141,7 @@ pacf(data[,i], main = paste(names[i]))
 
 ```
 
-##Integration order verification
+## Integration Order Verification
 
 ```{r Integration}
 #| echo: false
@@ -173,12 +195,11 @@ print(results.adf0)
 print(results.adf1)
 print(results.adf2)
 
-
 ```
 
 # Methodology
 
-Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.
+Below is the Structural Vector Autoregression (SVAR) model required to capture the dynamics between the variables.
 
 \begin{align}
 B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
