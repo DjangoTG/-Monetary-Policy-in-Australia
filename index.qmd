@@ -191,9 +191,13 @@ results.adf2[i,3] <- "N/A"
 results.adf2[i,4] <- "N/A" }
 }
 
-print(results.adf0)
-print(results.adf1)
-print(results.adf2)
+# print(results.adf0)
+# print(results.adf1)
+# print(results.adf2)
+
+rmarkdown::paged_table(results.adf0)
+rmarkdown::paged_table(results.adf1)
+rmarkdown::paged_table(results.adf2)
 
 ```
 
