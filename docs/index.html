@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.475">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -18,9 +18,10 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
@@ -47,43 +48,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -123,6 +94,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
@@ -139,6 +111,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">Macroeconometrics Research Report</span>
     </a>
   </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
           <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -164,6 +138,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#extended-model-formulation" id="toc-extended-model-formulation" class="nav-link" data-scroll-target="#extended-model-formulation">Extended model formulation</a></li>
   <li><a href="#reproduction-for-artificial-data" id="toc-reproduction-for-artificial-data" class="nav-link" data-scroll-target="#reproduction-for-artificial-data">Reproduction for artificial data</a></li>
   <li><a href="#empirical-estimation" id="toc-empirical-estimation" class="nav-link" data-scroll-target="#empirical-estimation">Empirical Estimation</a></li>
+  </ul></li>
+  <li><a href="#qld" id="toc-qld" class="nav-link" data-scroll-target="#qld">QLD</a>
+  <ul class="collapse">
+  <li><a href="#nsw" id="toc-nsw" class="nav-link" data-scroll-target="#nsw">NSW</a></li>
+  <li><a href="#vic" id="toc-vic" class="nav-link" data-scroll-target="#vic">VIC</a></li>
+  <li><a href="#wa" id="toc-wa" class="nav-link" data-scroll-target="#wa">WA</a></li>
+  <li><a href="#intepretations" id="toc-intepretations" class="nav-link" data-scroll-target="#intepretations">Intepretations</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -205,9 +186,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Plots below</p>
 <section id="data" class="level1">
 <h1>Data</h1>
-<div class="cell">
-
-</div>
 <p>The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.</p>
 <p>Below are plots of each of the available variables over time.</p>
 <div class="cell">
@@ -241,7 +219,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>                              Variable Lag.Order ADF.Statistic   p.value
-1                        Log(Real GDP)         4    -0.7525317 0.9635359
+1                        Log(Real GDP)         4    -0.7618079 0.9627076
 2     First Diff: Consumer Price Index         4    -1.7942981 0.6620412
 3                     Cash Rate Target         4    -4.8673605 0.0100000
 4                         Money Supply         4    -1.0831417 0.9218481
@@ -252,7 +230,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                              Variable Lag.Order     ADF.Statistic
-1                        Log(Real GDP)         3 -7.56973803890392
+1                        Log(Real GDP)         3 -7.55334389389226
 2     First Diff: Consumer Price Index         3 -9.80351441670259
 3                     Cash Rate Target       N/A               N/A
 4                         Money Supply         3  -3.3534305304591
@@ -353,7 +331,7 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  Sigma.hat <span class="ot">=</span> <span class="fu">t</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A.hat)<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A.hat)<span class="sc">/</span>T</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  Sigma.hat <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(Y))</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Setting Kappas</span></span>
@@ -462,26 +440,26 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]
-[1,] -0.180  0.260
-[2,]  0.994 -0.002
-[3,]  0.003  0.989</code></pre>
+<pre><code>      [,1]   [,2]
+[1,] 0.142 -0.045
+[2,] 0.993 -0.005
+[3,] 0.002  0.996</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 1.421 0.000
-[2,] 0.006 1.416</code></pre>
+[1,] 1.001 0.000
+[2,] 0.006 0.976</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]  [,2]
-[1,] 2.020 0.008
-[2,] 0.008 2.008</code></pre>
+[1,] 1.002 0.006
+[2,] 0.006 0.953</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -495,123 +473,128 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>priors.ext <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X.ex, <span class="at">Y =</span> Y.ex)</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>posteriors.ext <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p=</span> <span class="dv">1</span>,<span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> XN,<span class="at">Y=</span>YN, <span class="at">priors =</span> priors.ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>posteriors.ext <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p=</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X.ex,<span class="at">Y=</span>Y.ex, <span class="at">priors =</span> priors.ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]   [,2]
-[1,] 1.439  1.142
-[2,] 0.992 -0.018
-[3,] 0.016  0.996</code></pre>
+[1,] 0.148 -0.052
+[2,] 0.993 -0.005
+[3,] 0.002  0.995</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]
-[1,] 17.521  0.000
-[2,]  0.622 14.839</code></pre>
+<pre><code>      [,1]  [,2]
+[1,] 1.000 0.000
+[2,] 0.004 0.974</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>     [,1] [,2]
-[1,]  379   19
-[2,]   19  382</code></pre>
+<pre><code>       [,1]   [,2]
+[1,] 0.9998 0.0041
+[2,] 0.0041 0.9508</code></pre>
 </div>
 </div>
 </section>
 <section id="empirical-estimation" class="level2">
 <h2 class="anchored" data-anchor-id="empirical-estimation">Empirical Estimation</h2>
-<div class="cell">
-
-</div>
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]   [,2]   [,3]   [,4]   [,5]
- [1,] 0.009  0.018 -0.034  1.359 -0.082
- [2,] 1.000  0.000  0.000  0.009  0.000
- [3,] 0.000  0.989  0.002 -0.042  0.001
- [4,] 0.000 -0.002  0.998 -0.119  0.003
- [5,] 0.000  0.001 -0.003  1.287 -0.001
- [6,] 0.000  0.001 -0.002  0.071  0.995
- [7,] 0.000  0.000  0.000  0.000  0.000
- [8,] 0.000  0.000  0.000 -0.028  0.000
- [9,] 0.000  0.000 -0.001 -0.013  0.001
-[10,] 0.000  0.001  0.002 -0.063  0.000
-[11,] 0.000  0.000  0.000  0.012 -0.001
-[12,] 0.000  0.000  0.000  0.003  0.000
-[13,] 0.000  0.000  0.000  0.000  0.000
-[14,] 0.000  0.000 -0.001 -0.001  0.000
-[15,] 0.000 -0.003  0.003 -0.166  0.001
-[16,] 0.000  0.000  0.000  0.009  0.000
-[17,] 0.000  0.000  0.000 -0.004  0.000
-[18,] 0.000  0.000  0.000  0.001  0.000
-[19,] 0.000  0.000  0.000 -0.002  0.000
-[20,] 0.000  0.004  0.001 -0.047 -0.004
-[21,] 0.000  0.000  0.000  0.004  0.000
+ [1,] 0.009 -0.003 -0.040  2.187  0.015
+ [2,] 1.000  0.000  0.000  0.029  0.000
+ [3,] 0.000  0.990  0.002 -0.041  0.001
+ [4,] 0.000 -0.001  0.993 -0.148  0.001
+ [5,] 0.000  0.001 -0.003  1.288 -0.001
+ [6,] 0.000  0.001 -0.005  0.069  0.994
+ [7,] 0.000  0.000  0.000  0.004  0.000
+ [8,] 0.000  0.000  0.000 -0.027  0.000
+ [9,] 0.000  0.000 -0.003 -0.021  0.000
+[10,] 0.000  0.001  0.002 -0.062  0.000
+[11,] 0.000  0.000  0.000 -0.006 -0.001
+[12,] 0.000  0.000  0.000  0.005  0.000
+[13,] 0.000  0.000  0.000  0.005  0.000
+[14,] 0.000  0.000 -0.002 -0.013  0.000
+[15,] 0.000 -0.003  0.003 -0.162  0.001
+[16,] 0.000  0.000  0.000  0.007 -0.001
+[17,] 0.000  0.000  0.000  0.001  0.000
+[18,] 0.000  0.000  0.000 -0.002  0.000
+[19,] 0.000  0.000 -0.001 -0.007  0.000
+[20,] 0.000  0.004  0.000 -0.030 -0.002
+[21,] 0.000  0.000  0.000 -0.003 -0.001
 [22,] 0.000  0.000  0.000  0.000  0.000
-[23,] 0.000  0.000  0.000  0.001  0.000
-[24,] 0.000  0.000  0.000 -0.004  0.000
-[25,] 0.000 -0.002 -0.001 -0.051  0.000
-[26,] 0.000  0.000  0.000  0.006  0.000
-[27,] 0.000  0.000  0.000  0.000  0.000
-[28,] 0.000  0.000  0.000  0.001  0.000
-[29,] 0.000  0.000  0.000 -0.004  0.000
-[30,] 0.000 -0.001  0.000  0.011  0.001
-[31,] 0.000  0.000  0.000 -0.001  0.000
-[32,] 0.000  0.000  0.000  0.001  0.000
-[33,] 0.000  0.000  0.000  0.001  0.000
-[34,] 0.000  0.000  0.000 -0.004  0.000
-[35,] 0.000  0.001  0.000  0.018  0.001
-[36,] 0.000  0.000  0.000  0.002  0.000
-[37,] 0.000  0.000  0.000  0.000  0.000
-[38,] 0.000  0.000  0.000 -0.002  0.000
-[39,] 0.000  0.000  0.000  0.001  0.000
-[40,] 0.000  0.000  0.000  0.010  0.001
-[41,] 0.000  0.000  0.000 -0.001  0.000
-[42,] 0.000  0.000  0.000 -0.002  0.000
-[43,] 0.000  0.000  0.000  0.000  0.000
-[44,] 0.000  0.000  0.000  0.001  0.000
-[45,] 0.000  0.000  0.000 -0.007  0.000
-[46,] 0.000  0.000  0.000 -0.001  0.000
-[47,] 0.000  0.000  0.000  0.000  0.000
-[48,] 0.000  0.000  0.000  0.000  0.000
-[49,] 0.000  0.000  0.000 -0.002  0.000
-[50,] 0.000  0.000 -0.001  0.021  0.001
-[51,] 0.000  0.000  0.000 -0.001  0.000</code></pre>
+[23,] 0.000  0.000  0.000 -0.005  0.000
+[24,] 0.000  0.000 -0.001 -0.003  0.000
+[25,] 0.000 -0.002 -0.001 -0.027  0.002
+[26,] 0.000  0.000  0.000  0.004  0.000</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]   [,2]   [,3]   [,4]  [,5]
-[1,]  0.010  0.000  0.000  0.000 0.000
-[2,]  0.225  0.616  0.000  0.000 0.000
-[3,]  0.027  0.029  0.434  0.000 0.000
-[4,] -2.477 -0.495 -4.852 16.767 0.000
-[5,] -0.176 -0.018 -0.065  0.015 0.383</code></pre>
+[1,]  0.089  0.000  0.000  0.000 0.000
+[2,]  0.022  0.653  0.000  0.000 0.000
+[3,]  0.005  0.038  0.474  0.000 0.000
+[4,] -0.280 -1.309 -4.455 16.678 0.000
+[5,] -0.022 -0.079 -0.082  0.044 0.439</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]   [,2]   [,3]    [,4]   [,5]
-[1,]  0.000  0.002  0.000  -0.025 -0.002
-[2,]  0.002  0.435  0.024  -0.857 -0.051
-[3,]  0.000  0.024  0.194  -2.226 -0.034
-[4,] -0.025 -0.857 -2.226 320.040  1.029
-[5,] -0.002 -0.051 -0.034   1.029  0.188</code></pre>
+[1,]  0.008  0.002  0.000  -0.025 -0.002
+[2,]  0.002  0.432  0.025  -0.874 -0.053
+[3,]  0.000  0.025  0.231  -2.209 -0.043
+[4,] -0.025 -0.874 -2.209 308.519  1.247
+[5,] -0.002 -0.053 -0.043   1.247  0.216</code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="qld" class="level1">
+<h1>QLD</h1>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<section id="nsw" class="level3">
+<h3 class="anchored" data-anchor-id="nsw">NSW</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="vic" class="level3">
+<h3 class="anchored" data-anchor-id="vic">VIC</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="wa" class="level3">
+<h3 class="anchored" data-anchor-id="wa">WA</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="intepretations" class="level3">
+<h3 class="anchored" data-anchor-id="intepretations">Intepretations</h3>
+<p>Each of the impulse response functions show how variables react to a shock to Log real GDP. There are four different systems, one for each of the key Australian states.</p>
+<p>The goal of this paper is to find how different states react to changes in monetary policy, unfortunately I do not yield any results that are statistically different from zero, other than the effect of a shock to GDP on itself.</p>
+<p>Looking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the</p>
 </section>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
@@ -648,9 +631,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -715,6 +712,92 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
