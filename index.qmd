@@ -38,15 +38,15 @@ log.rgdp = log(real.gdp_temp)
 crt <- readrba::read_rba(series_id = "FOOIRATCR") 
 crt_temp <- xts::xts(crt$value, crt$date)
 
-##Money Supply
+##Money Supply log
 MS <- readrba::read_rba(series_id = "DMAM1N") 
 MS_temp <- xts::xts(MS$value, MS$date)
-
+log.MS <- log(MS_temp)
 
 ##Consumer Price Index
 CPI <- readrba::read_rba(series_id = "GCPIAG") 
 CPI_temp <- xts::xts(CPI$value, CPI$date)
-D.CPI <- diff(CPI_temp)
+log.CPI <- log(CPI_temp)
 
 
 ##QLD Unemployment Rate
@@ -61,19 +61,19 @@ UER.NSW_temp <- xts::xts(UER.NSW$value, UER.NSW$date - days(1))
 
 ##VIC Unemployment Rate
 
-UER.VIC <- readabs::read_abs(series_id = "A84423350C") 
+UER.VIC <- readabs::read_abs(series_id = "A84423354L") 
 UER.VIC_temp <- xts::xts(UER.VIC$value, UER.VIC$date - days(1))
 
 ##WA Unemployment Rate
 
-UER.WA <- readabs::read_abs(series_id = "A84423322V") 
+UER.WA <- readabs::read_abs(series_id = "A84423326C") 
 UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
 
 
 
-data <- as.data.frame(merge(log.rgdp, D.CPI, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
+data <- as.data.frame(merge(log.rgdp, log.CPI, crt_temp, log.MS, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
 
-names <- c("Log(Real GDP)","First Diff: Consumer Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+names <- c("Log(Real GDP)","Log(Consumer Price Index)", "Cash Rate Target", "Log(Money Supply)", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
 
 data <- na.omit(data)[1:132,]
 
@@ -92,7 +92,7 @@ Below are plots of each of the available variables over time.
 
 dates <- as.Date(rownames(data),format = "%Y-%m-%d")
 
-units <- c("","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
+units <- c("","", "", "", "Percent", "Percent", "Percent", "Percent")
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
 
@@ -614,28 +614,15 @@ load("irf-fevd-k1.RData")
 
 
 
-IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
-IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
 rownames(IRFs.k1) = colnames(Y)
 rownames(IRFs.k1)[5] = "Unemployment Rate: Queensland"
 
-IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
-hh          = 1:5
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+hh          = 1:21
 
 
-
-
-
-mcxs1  = "#05386B"
-mcxs2  = "#379683"
-mcxs3  = "#5CDB95"
-mcxs4  = "#8EE4AF"
-mcxs5  = "#EDF5E1"
-purple = "#b02442"
-mcxs1.rgb   = col2rgb(mcxs1)
-mcxs1.shade1= rgb(mcxs1.rgb[1],mcxs1.rgb[2],mcxs1.rgb[3], alpha=120, maxColorValue=255)
-mcxs2.rgb   = col2rgb(mcxs2)
-mcxs2.shade1= rgb(mcxs2.rgb[1],mcxs2.rgb[2],mcxs2.rgb[3], alpha=120, maxColorValue=255)
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
 for (n in 1:N){
   ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
@@ -654,6 +641,7 @@ for (n in 1:N){
 
 
 ```
+
 ### NSW
 ```{R}
 #IRFs
@@ -699,13 +687,13 @@ load("irf-fevd-k1.RData")
 
 
 
-IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
-IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
 rownames(IRFs.k1) = colnames(Y)
 rownames(IRFs.k1)[5] = "Unemployment Rate: New South Wales"
 
-IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
-hh          = 1:5
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+hh          = 1:21
 
 
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
@@ -734,7 +722,7 @@ B.posterior <- posteriors.emp.vic$B.posterior
 
 
 
-h = 20
+
 S = 1000
 N = ncol(Y)
 IRF.posterior     = array(NA,c(N,N,h+1,S))
@@ -771,14 +759,14 @@ load("irf-fevd-k1.RData")
 
 
 
-IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
-IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
 rownames(IRFs.k1) = colnames(Y)
 rownames(IRFs.k1)[5] = "Unemployment Rate: Victoria"
 
 
-IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
-hh          = 1:5
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+
 
 
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
@@ -809,7 +797,7 @@ B.posterior <- posteriors.emp.wa$B.posterior
 
 
 
-h = 20
+
 S = 1000
 N = ncol(Y)
 IRF.posterior     = array(NA,c(N,N,h+1,S))
@@ -846,13 +834,13 @@ load("irf-fevd-k1.RData")
 
 
 
-IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
-IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
 rownames(IRFs.k1) = colnames(Y)
 rownames(IRFs.k1)[5] = "Unemployment Rate: Western Australia"
 
-IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
-hh          = 1:5
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+
 
 
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)

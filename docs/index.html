@@ -218,46 +218,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>##Integration order verification</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>                              Variable Lag.Order ADF.Statistic   p.value
-1                        Log(Real GDP)         4    -0.7618079 0.9627076
-2     First Diff: Consumer Price Index         4    -1.7942981 0.6620412
-3                     Cash Rate Target         4    -4.8673605 0.0100000
-4                         Money Supply         4    -1.0831417 0.9218481
-5        Unemployment Rate: Queensland         4    -1.8629808 0.6334799
-6   Unemployment Rate: New South Wales         4    -2.8242561 0.2337397
-7          Unemployment Rate: Victoria         4    -2.1288883 0.5229040
-8 Unemployment Rate: Western Australia         4    -2.0415440 0.5592256</code></pre>
+<pre><code>                              Variable Lag.Order ADF.Statistic    p.value
+1                        Log(Real GDP)         4    -0.7618079 0.96270763
+2            Log(Consumer Price Index)         4    -2.7800487 0.25212307
+3                     Cash Rate Target         4    -4.8673605 0.01000000
+4                    Log(Money Supply)         4    -3.3477511 0.06635259
+5        Unemployment Rate: Queensland         4    -1.8629808 0.63347993
+6   Unemployment Rate: New South Wales         4    -2.8242561 0.23373972
+7          Unemployment Rate: Victoria         4    -2.0475947 0.55670942
+8 Unemployment Rate: Western Australia         4    -2.1266543 0.52383298</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                              Variable Lag.Order     ADF.Statistic
 1                        Log(Real GDP)         3 -7.55334389389226
-2     First Diff: Consumer Price Index         3 -9.80351441670259
+2            Log(Consumer Price Index)         3 -3.71887022359102
 3                     Cash Rate Target       N/A               N/A
-4                         Money Supply         3  -3.3534305304591
+4                    Log(Money Supply)         3  -4.0408232882447
 5        Unemployment Rate: Queensland         3 -6.54720362988815
 6   Unemployment Rate: New South Wales         3 -5.26681334164472
-7          Unemployment Rate: Victoria         3 -6.57502342373225
-8 Unemployment Rate: Western Australia         3 -6.95240168751401
+7          Unemployment Rate: Victoria         3 -6.87975208928033
+8 Unemployment Rate: Western Australia         3 -7.10487731623548
             p.value
 1              0.01
-2              0.01
+2 0.025283494239944
 3               N/A
-4 0.065428244923483
+4              0.01
 5              0.01
 6              0.01
 7              0.01
 8              0.01</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                              Variable Lag.Order    ADF.Statistic p.value
-1                        Log(Real GDP)       N/A              N/A     N/A
-2     First Diff: Consumer Price Index       N/A              N/A     N/A
-3                     Cash Rate Target       N/A              N/A     N/A
-4                         Money Supply         3 -5.8300171259421    0.01
-5        Unemployment Rate: Queensland       N/A              N/A     N/A
-6   Unemployment Rate: New South Wales       N/A              N/A     N/A
-7          Unemployment Rate: Victoria       N/A              N/A     N/A
-8 Unemployment Rate: Western Australia       N/A              N/A     N/A</code></pre>
+<pre><code>                              Variable Lag.Order ADF.Statistic p.value
+1                        Log(Real GDP)       N/A           N/A     N/A
+2            Log(Consumer Price Index)       N/A           N/A     N/A
+3                     Cash Rate Target       N/A           N/A     N/A
+4                    Log(Money Supply)       N/A           N/A     N/A
+5        Unemployment Rate: Queensland       N/A           N/A     N/A
+6   Unemployment Rate: New South Wales       N/A           N/A     N/A
+7          Unemployment Rate: Victoria       N/A           N/A     N/A
+8 Unemployment Rate: Western Australia       N/A           N/A     N/A</code></pre>
 </div>
 </div>
 </section>
@@ -441,25 +441,25 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]   [,2]
-[1,] 0.142 -0.045
-[2,] 0.993 -0.005
-[3,] 0.002  0.996</code></pre>
+[1,] 0.161  0.029
+[2,] 0.994 -0.007
+[3,] 0.004  0.997</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 1.001 0.000
-[2,] 0.006 0.976</code></pre>
+<pre><code>       [,1]  [,2]
+[1,]  1.035 0.000
+[2,] -0.022 1.016</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 1.002 0.006
-[2,] 0.006 0.953</code></pre>
+<pre><code>       [,1]   [,2]
+[1,]  1.071 -0.023
+[2,] -0.023  1.033</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -479,25 +479,25 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>      [,1]   [,2]
-[1,] 0.148 -0.052
-[2,] 0.993 -0.005
-[3,] 0.002  0.995</code></pre>
+[1,] 0.163  0.030
+[2,] 0.994 -0.007
+[3,] 0.004  0.997</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>      [,1]  [,2]
-[1,] 1.000 0.000
-[2,] 0.004 0.974</code></pre>
+<pre><code>       [,1]  [,2]
+[1,]  1.033 0.000
+[2,] -0.022 1.013</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]
-[1,] 0.9998 0.0041
-[2,] 0.0041 0.9508</code></pre>
+<pre><code>        [,1]    [,2]
+[1,]  1.0684 -0.0225
+[2,] -0.0225  1.0275</code></pre>
 </div>
 </div>
 </section>
@@ -506,55 +506,55 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]   [,3]   [,4]   [,5]
- [1,] 0.009 -0.003 -0.040  2.187  0.015
- [2,] 1.000  0.000  0.000  0.029  0.000
- [3,] 0.000  0.990  0.002 -0.041  0.001
- [4,] 0.000 -0.001  0.993 -0.148  0.001
- [5,] 0.000  0.001 -0.003  1.288 -0.001
- [6,] 0.000  0.001 -0.005  0.069  0.994
- [7,] 0.000  0.000  0.000  0.004  0.000
- [8,] 0.000  0.000  0.000 -0.027  0.000
- [9,] 0.000  0.000 -0.003 -0.021  0.000
-[10,] 0.000  0.001  0.002 -0.062  0.000
-[11,] 0.000  0.000  0.000 -0.006 -0.001
-[12,] 0.000  0.000  0.000  0.005  0.000
-[13,] 0.000  0.000  0.000  0.005  0.000
-[14,] 0.000  0.000 -0.002 -0.013  0.000
-[15,] 0.000 -0.003  0.003 -0.162  0.001
-[16,] 0.000  0.000  0.000  0.007 -0.001
-[17,] 0.000  0.000  0.000  0.001  0.000
-[18,] 0.000  0.000  0.000 -0.002  0.000
-[19,] 0.000  0.000 -0.001 -0.007  0.000
-[20,] 0.000  0.004  0.000 -0.030 -0.002
-[21,] 0.000  0.000  0.000 -0.003 -0.001
-[22,] 0.000  0.000  0.000  0.000  0.000
-[23,] 0.000  0.000  0.000 -0.005  0.000
-[24,] 0.000  0.000 -0.001 -0.003  0.000
-[25,] 0.000 -0.002 -0.001 -0.027  0.002
-[26,] 0.000  0.000  0.000  0.004  0.000</code></pre>
+<pre><code>       [,1]  [,2]   [,3]  [,4]   [,5]
+ [1,] 0.008 0.008  0.052 0.024 -0.035
+ [2,] 1.000 0.000  0.000 0.000  0.000
+ [3,] 0.000 1.000  0.000 0.000  0.000
+ [4,] 0.000 0.000  0.989 0.000  0.004
+ [5,] 0.000 0.000  0.003 1.000  0.000
+ [6,] 0.000 0.000 -0.008 0.000  0.994
+ [7,] 0.000 0.000  0.000 0.000  0.000
+ [8,] 0.000 0.000  0.000 0.000  0.000
+ [9,] 0.000 0.000 -0.005 0.000  0.001
+[10,] 0.000 0.000  0.001 0.000  0.000
+[11,] 0.000 0.000 -0.001 0.000 -0.001
+[12,] 0.000 0.000  0.000 0.000  0.000
+[13,] 0.000 0.000  0.000 0.000  0.000
+[14,] 0.000 0.000 -0.002 0.000  0.000
+[15,] 0.000 0.000  0.000 0.000  0.000
+[16,] 0.000 0.000  0.000 0.000 -0.001
+[17,] 0.000 0.000  0.000 0.000  0.000
+[18,] 0.000 0.000  0.000 0.000  0.000
+[19,] 0.000 0.000 -0.001 0.000  0.000
+[20,] 0.000 0.000  0.000 0.000  0.000
+[21,] 0.000 0.000  0.000 0.000  0.000
+[22,] 0.000 0.000  0.000 0.000  0.000
+[23,] 0.000 0.000  0.000 0.000  0.000
+[24,] 0.000 0.000 -0.001 0.000  0.000
+[25,] 0.000 0.000  0.000 0.000  0.000
+[26,] 0.000 0.000  0.000 0.000  0.000</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]   [,3]   [,4]  [,5]
-[1,]  0.089  0.000  0.000  0.000 0.000
-[2,]  0.022  0.653  0.000  0.000 0.000
-[3,]  0.005  0.038  0.474  0.000 0.000
-[4,] -0.280 -1.309 -4.455 16.678 0.000
-[5,] -0.022 -0.079 -0.082  0.044 0.439</code></pre>
+<pre><code>       [,1]   [,2]   [,3]  [,4]  [,5]
+[1,]  0.089  0.000  0.000 0.000 0.000
+[2,]  0.000  0.089  0.000 0.000 0.000
+[3,]  0.005  0.011  0.483 0.000 0.000
+[4,]  0.000 -0.001 -0.007 0.093 0.000
+[5,] -0.020 -0.001 -0.089 0.003 0.456</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]   [,3]    [,4]   [,5]
-[1,]  0.008  0.002  0.000  -0.025 -0.002
-[2,]  0.002  0.432  0.025  -0.874 -0.053
-[3,]  0.000  0.025  0.231  -2.209 -0.043
-[4,] -0.025 -0.874 -2.209 308.519  1.247
-[5,] -0.002 -0.053 -0.043   1.247  0.216</code></pre>
+<pre><code>       [,1]  [,2]   [,3]   [,4]   [,5]
+[1,]  0.008 0.000  0.000  0.000 -0.002
+[2,]  0.000 0.008  0.001  0.000  0.000
+[3,]  0.000 0.001  0.239 -0.004 -0.044
+[4,]  0.000 0.000 -0.004  0.009  0.001
+[5,] -0.002 0.000 -0.044  0.001  0.223</code></pre>
 </div>
 </div>
 </section>
@@ -594,7 +594,7 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <h3 class="anchored" data-anchor-id="intepretations">Intepretations</h3>
 <p>Each of the impulse response functions show how variables react to a shock to Log real GDP. There are four different systems, one for each of the key Australian states.</p>
 <p>The goal of this paper is to find how different states react to changes in monetary policy, unfortunately I do not yield any results that are statistically different from zero, other than the effect of a shock to GDP on itself.</p>
-<p>Looking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the</p>
+<p>Looking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the impact of real GDP on unemployment levels is lowest in New South Wales. However, as stated earlier, the results are not statistically different from zero.</p>
 </section>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
