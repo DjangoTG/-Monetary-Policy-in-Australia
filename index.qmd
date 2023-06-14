@@ -575,7 +575,16 @@ round(apply(posteriors.emp.qld$Sigma.posterior, 1:2, mean),3)
 A.posterior <- posteriors.emp.qld$A.posterior
 B.posterior <- posteriors.emp.qld$B.posterior
 
-
+mcxs1  = "#05386B"
+mcxs2  = "#379683"
+mcxs3  = "#5CDB95"
+mcxs4  = "#8EE4AF"
+mcxs5  = "#EDF5E1"
+purple = "#b02442"
+mcxs1.rgb   = col2rgb(mcxs1)
+mcxs1.shade1= rgb(mcxs1.rgb[1],mcxs1.rgb[2],mcxs1.rgb[3], alpha=120, maxColorValue=255)
+mcxs2.rgb   = col2rgb(mcxs2)
+mcxs2.shade1= rgb(mcxs2.rgb[1],mcxs2.rgb[2],mcxs2.rgb[3], alpha=120, maxColorValue=255)
 
 h = 20
 S = 1000
