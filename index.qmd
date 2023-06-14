@@ -47,15 +47,15 @@ log.rgdp = log(real.gdp_temp)
 crt <- readrba::read_rba(series_id = "FOOIRATCR") 
 crt_temp <- xts::xts(crt$value, crt$date)
 
-##Money Supply
+##Money Supply log
 MS <- readrba::read_rba(series_id = "DMAM1N") 
 MS_temp <- xts::xts(MS$value, MS$date)
-
+log.MS <- log(MS_temp)
 
 ##Consumer Price Index
 CPI <- readrba::read_rba(series_id = "GCPIAG") 
 CPI_temp <- xts::xts(CPI$value, CPI$date)
-D.CPI <- diff(CPI_temp)
+log.CPI <- log(CPI_temp)
 
 
 ##QLD Unemployment Rate
@@ -70,19 +70,19 @@ UER.NSW_temp <- xts::xts(UER.NSW$value, UER.NSW$date - days(1))
 
 ##VIC Unemployment Rate
 
-UER.VIC <- readabs::read_abs(series_id = "A84423350C") 
+UER.VIC <- readabs::read_abs(series_id = "A84423354L") 
 UER.VIC_temp <- xts::xts(UER.VIC$value, UER.VIC$date - days(1))
 
 ##WA Unemployment Rate
 
-UER.WA <- readabs::read_abs(series_id = "A84423322V") 
+UER.WA <- readabs::read_abs(series_id = "A84423326C") 
 UER.WA_temp <- xts::xts(UER.WA$value, UER.WA$date - days(1))
 
 
 
-data <- as.data.frame(merge(log.rgdp, D.CPI, crt_temp, MS_temp, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
+data <- as.data.frame(merge(log.rgdp, log.CPI, crt_temp, log.MS, UER.QLD_temp, UER.NSW_temp, UER.VIC_temp, UER.WA_temp))
 
-names <- c("Log(Real GDP)","First Diff: Consumer Price Index", "Cash Rate Target", "Money Supply", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
+names <- c("Log(Real GDP)","Log(Consumer Price Index)", "Cash Rate Target", "Log(Money Supply)", "Unemployment Rate: Queensland", "Unemployment Rate: New South Wales","Unemployment Rate: Victoria","Unemployment Rate: Western Australia")
 
 data <- na.omit(data)[1:132,]
 
@@ -113,7 +113,7 @@ Below are plots of each of the available variables over time.
 
 dates <- as.Date(rownames(data),format = "%Y-%m-%d")
 
-units <- c("","", "", "", "Per cent per annum", "$ billion", "Percent", "Percent","Percent","Percent")
+units <- c("","", "", "", "Percent", "Percent", "Percent", "Percent")
 
 par(mfrow=c(2,2), mar=c(4,4,4,4))
 #alternative margins for figures
@@ -303,7 +303,7 @@ calc.priors <- function(p, X, Y){
   
   
   A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
-  Sigma.hat = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/T
+  Sigma.hat = diag(ncol(Y))
   N = ncol(Y)
     
   #Setting Kappas
@@ -452,7 +452,7 @@ Y.ex <- rbind(YN, Y)
 
 priors.ext = calc.priors(p = 1, X = X.ex, Y = Y.ex)
 
-posteriors.ext = calc.posteriors(p= 1,S = 1000, X = XN,Y=YN, priors = priors.ext)
+posteriors.ext = calc.posteriors(p= 1, S = 1000, X = X.ex,Y=Y.ex, priors = priors.ext)
 
 
 ```
@@ -467,15 +467,15 @@ round(apply(posteriors.ext$B.posterior, 1:2, mean),3)
 ```
 Sigma.posterior:
 ```{R}
-round(apply(posteriors.ext$Sigma.posterior, 1:2, mean))
+round(apply(posteriors.ext$Sigma.posterior, 1:2, mean), 4)
 ```
 ## Empirical Estimation
 
-```{R}
-##Create Y and X
+```{R} 
+##Create Y and X for QLD
 
 
-p = 10
+p = 5
 y = ts(data[c(1:4, 5)])
 T = nrow(y)
 Y = y[(p+1):T,]
@@ -489,104 +489,195 @@ for (i in 1:p){
 A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
 Sigma.hat = diag(2)
 
-emp.initial.dum <- prior.ex(data = y, p = 10)
+emp.initial.dum <- prior.ex(data = y, p)
 X.emp <- rbind(emp.initial.dum$XN, X)
 Y.emp <- rbind(emp.initial.dum$YN, Y)
 
-priors.emp = calc.priors(p = 10, X = X.emp, Y = Y.emp)
-posteriors.emp = calc.posteriors(p = 10,S = 1000, X = X, Y= Y, priors.emp)
+priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.qld = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+```
+
+```{R} 
+##Create Y and X for NSW
 
 
+p = 5
+y = ts(data[c(1:4, 6)])
+T = nrow(y)
+Y = y[(p+1):T,]
+
+X       = matrix(1,nrow(Y),1)
+
+for (i in 1:p){
+  X     = cbind(X,y[(p+1):T-i,])
+}
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+
+emp.initial.dum <- prior.ex(data = y, p)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
+
+priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.nsw = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+```
+
+```{R} 
+##Create Y and X for VIC
+
+
+p = 5
+y = ts(data[c(1:4, 7)])
+T = nrow(y)
+Y = y[(p+1):T,]
+
+X       = matrix(1,nrow(Y),1)
+
+for (i in 1:p){
+  X     = cbind(X,y[(p+1):T-i,])
+}
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+
+emp.initial.dum <- prior.ex(data = y, p)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
+
+priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.vic = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+```
+
+```{R} 
+##Create Y and X for WA
+
+
+p = 5
+y = ts(data[c(1:4, 8)])
+T = nrow(y)
+Y = y[(p+1):T,]
+
+X       = matrix(1,nrow(Y),1)
+
+for (i in 1:p){
+  X     = cbind(X,y[(p+1):T-i,])
+}
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+
+emp.initial.dum <- prior.ex(data = y, p)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
+
+priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.wa = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
 
 ```
 
 A.posterior:
 ```{R}
-round(apply(posteriors.emp$A.posterior, 1:2, mean),3)
+round(apply(posteriors.emp.qld$A.posterior, 1:2, mean),3)
 ```
 B.posterior:
 ```{R}
-round(apply(posteriors.emp$B.posterior, 1:2, mean),3)
+round(apply(posteriors.emp.qld$B.posterior, 1:2, mean),3)
 ```
 Sigma.posterior:
 ```{R}
-round(apply(posteriors.emp$Sigma.posterior, 1:2, mean),3)
+round(apply(posteriors.emp.qld$Sigma.posterior, 1:2, mean),3)
 ```
-
+# QLD
 ```{R}
 #IRFs
-A.posterior <- posteriors.emp$A.posterior
-B.posterior <- posteriors.emp$B.posterior
+A.posterior <- posteriors.emp.qld$A.posterior
+B.posterior <- posteriors.emp.qld$B.posterior
 
-#SignRestrictions <- function(sign.restrictions, posteriors){
-  #
-  #A.posterior   = posteriors$A.posterior
-  #B.posterior = posteriors$B.posterior
-  #B1.posterior = posteriors$B1.posterior
-  #Sigma.posterior = posteriors$Sigma.posterior
-#  
-#  S = dim(A.posterior)[3]
-#  N = dim(B.posterior)[1]
-#  p = (dim(B1.posterior)[2]-1)/N
-#  
-#  R1            = diag(sign.restrictions)
-#  B0.draws      = array(NA,c(N,N,S))
-#  B1.draws      = array(NA,c(N,(1+N*p),S))
-#  pb = txtProgressBar(min = 0, max = S, initial = 0)
-#for (s in 1:S){
-#  
-#  setTxtProgressBar(pb, s)
-#  
-#  B0.tilde <-B.posterior[,,s]
-#  B1.tilde <-  B1.posterior[,,s]
-#  A <- A.posterior[,,s]
-#  Sigma <- Sigma.posterior[,,s]
- ### 
-  #sign.restrictions.do.not.hold = TRUE
-#
- # i=1
-#  
-#  while (sign.restrictions.do.not.hold){
-#    X           = matrix(rnorm(N*N),N,N)
-#    QR          = qr(X, tol = 1e-10)
-#    Q           = qr.Q(QR,complete=TRUE)
-#    R           = qr.R(QR,complete=TRUE)
-#    Q           = t(Q %*% diag(sign(diag(R))))
-#    B0          = Q%*%B0.tilde 
-#    B0.inv      = solve(B0) 
-#    # check       = prod(R1 %*% B0.inv %*% diag(N)[,1] > 0) # Check #reponse at time 0
-#    check       = prod(R1 %*% B0.inv %*% diag(N)[,1] >= 0)
-#    
-    
-#    if (check==1){sign.restrictions.do.not.hold=FALSE}
-#    i=i+1
-#  }
-#  B1            = Q%*%B1.tilde 
-#  B0.draws[,,s] = B0
-#  B1.draws[,,s] = B1#
+mcxs1  = "#05386B"
+mcxs2  = "#379683"
+mcxs3  = "#5CDB95"
+mcxs4  = "#8EE4AF"
+mcxs5  = "#EDF5E1"
+purple = "#b02442"
+mcxs1.rgb   = col2rgb(mcxs1)
+mcxs1.shade1= rgb(mcxs1.rgb[1],mcxs1.rgb[2],mcxs1.rgb[3], alpha=120, maxColorValue=255)
+mcxs2.rgb   = col2rgb(mcxs2)
+mcxs2.shade1= rgb(mcxs2.rgb[1],mcxs2.rgb[2],mcxs2.rgb[3], alpha=120, maxColorValue=255)
 
-#}
-#  draws = list(B0.draws = B0.draws,B1.draws = B1.draws,i = i)
-#  return (draws)
-#}
-#  
-#sign.restictions = c(1,1,-1,1,-1)
-#posteriors = posteriors.emp
-#draws.emp <- SignRestrictions(sign.restictions, posteriors = posteriors.emp)
+h = 20
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
 
-#B0.draws = draws.emp$B0.draws
-#B1.draws = draws.emp$B1.draws
-
-#A.posterior <- array(NA,c(N*p+1,N,S))
-#B.posterior       = array(NA,c(N,N,S))
-#S.check <- array(NA,c(N,N,S))
-
-#for (s in 1:S){
-  #A.posterior[,,s] <- t(B1.draws[,,s]) %*% B0.draws[,,s]
-  #B.posterior[,,s] <- solve(B0.draws[,,s])
-#}
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
 
 
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: Queensland"
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+hh          = 1:21
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
+
+
+
+
+
+
+```
+
+### NSW
+```{R}
+#IRFs
+A.posterior <- posteriors.emp.nsw$A.posterior
+B.posterior <- posteriors.emp.nsw$B.posterior
 
 
 
@@ -632,28 +723,100 @@ save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
 load("irf-fevd-k1.RData")
 ```
 
-### IRFs
-```{r plot IRFs}
-IRFs.k1           = apply(IRF.posterior[,1,,],1:2,mean)
-IRFs.inf.k1       = apply(IRF.inf.posterior[,1,],1,mean)
-rownames(IRFs.k1) = colnames(Y)
 
-IRFs.k1.hdi    = apply(IRF.posterior[,1,,],1:2,hdi, credMass=0.68)
-hh          = 1:5
+### IRFs
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: New South Wales"
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+hh          = 1:21
 
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
-for (n in 1:5){
+for (n in 1:N){
   ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
   plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
-  if (n==5 | n==6){
-    axis(1,c(1,2,5,9),c("","1 quarter","1 year","2 years"))
-  } else {
-    axis(1,c(1,2,5,9),c("","","",""))
-  }
+  
+    axis(1, at = c(12), labels = c("2.5year"))
   axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
-  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
   abline(h=0)
-  lines(hh, IRFs.k1[n,hh],lwd=2)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
+
+
+
+
+
+
+```
+### VIC
+```{R}
+#IRFs
+A.posterior <- posteriors.emp.vic$A.posterior
+B.posterior <- posteriors.emp.vic$B.posterior
+
+
+
+
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
+
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
+
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: Victoria"
+
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
 }
 
 ```
@@ -680,7 +843,88 @@ for (n in 1:N){
 }
 axis(4, (0.5*(fevd.unemQ[(1:N),(h+1)]+fevd.unemQ[2:(N+1),(h+1)]))[c(4,5)], c("au.mps","unem.Q"))
 
+
 ```
+### WA
+```{R}
+#IRFs
+A.posterior <- posteriors.emp.wa$A.posterior
+B.posterior <- posteriors.emp.wa$B.posterior
+
+
+
+
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
+
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
+
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: Western Australia"
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
+
+
+
+
+
+
+```
+### Intepretations
+
+Each of the impulse response functions show how variables react to a shock to Log real GDP. There are four different systems, one for each of the key Australian states.
+
+The goal of this paper is to find how different states react to changes in monetary policy, unfortunately I do not yield any results that are statistically different from zero, other than the effect of a shock to GDP on itself.
+
+Looking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the impact of real GDP on unemployment levels is lowest in New South Wales. However, as stated earlier, the results are not statistically different from zero.  
+
 
 
 ## References {.unnumbered}
