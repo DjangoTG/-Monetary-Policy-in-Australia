@@ -8,7 +8,7 @@
 
 <meta name="author" content="Django Trueman-Greinke">
 
-<title>Macroeconometrics Research Report - Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis</title>
+<title>Macroeconometrics Research Report - Examining the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -94,6 +94,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -126,25 +129,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
-  <li><a href="#preliminary-results" id="toc-preliminary-results" class="nav-link" data-scroll-target="#preliminary-results">Preliminary Results</a>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#preliminary-data-analysis" id="toc-preliminary-data-analysis" class="nav-link" data-scroll-target="#preliminary-data-analysis">Preliminary Data Analysis</a>
   <ul class="collapse">
   <li><a href="#acf-and-pacf-plots" id="toc-acf-and-pacf-plots" class="nav-link" data-scroll-target="#acf-and-pacf-plots">ACF and PACF plots</a></li>
+  <li><a href="#integration-order-verification" id="toc-integration-order-verification" class="nav-link" data-scroll-target="#integration-order-verification">Integration Order Verification</a></li>
   </ul></li>
   <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">Methodology</a></li>
   <li><a href="#modelling-framework" id="toc-modelling-framework" class="nav-link" data-scroll-target="#modelling-framework">Modelling Framework</a>
   <ul class="collapse">
   <li><a href="#basic-model" id="toc-basic-model" class="nav-link" data-scroll-target="#basic-model">Basic Model</a></li>
   <li><a href="#extended-model-formulation" id="toc-extended-model-formulation" class="nav-link" data-scroll-target="#extended-model-formulation">Extended model formulation</a></li>
-  <li><a href="#reproduction-for-artificial-data" id="toc-reproduction-for-artificial-data" class="nav-link" data-scroll-target="#reproduction-for-artificial-data">Reproduction for artificial data</a></li>
-  <li><a href="#empirical-estimation" id="toc-empirical-estimation" class="nav-link" data-scroll-target="#empirical-estimation">Empirical Estimation</a></li>
   </ul></li>
-  <li><a href="#qld" id="toc-qld" class="nav-link" data-scroll-target="#qld">QLD</a>
+  <li><a href="#reproduction-for-artificial-data" id="toc-reproduction-for-artificial-data" class="nav-link" data-scroll-target="#reproduction-for-artificial-data">Reproduction for artificial data</a></li>
+  <li><a href="#empirical-estimation" id="toc-empirical-estimation" class="nav-link" data-scroll-target="#empirical-estimation">Empirical Estimation</a>
   <ul class="collapse">
-  <li><a href="#nsw" id="toc-nsw" class="nav-link" data-scroll-target="#nsw">NSW</a></li>
-  <li><a href="#vic" id="toc-vic" class="nav-link" data-scroll-target="#vic">VIC</a></li>
-  <li><a href="#wa" id="toc-wa" class="nav-link" data-scroll-target="#wa">WA</a></li>
+  <li><a href="#queensland" id="toc-queensland" class="nav-link" data-scroll-target="#queensland">Queensland</a>
+  <ul class="collapse">
+  <li><a href="#basic-model-estimation" id="toc-basic-model-estimation" class="nav-link" data-scroll-target="#basic-model-estimation">Basic Model Estimation</a></li>
+  <li><a href="#extended-model-estimation" id="toc-extended-model-estimation" class="nav-link" data-scroll-target="#extended-model-estimation">Extended Model Estimation</a></li>
+  </ul></li>
+  <li><a href="#new-south-wales" id="toc-new-south-wales" class="nav-link" data-scroll-target="#new-south-wales">New South Wales</a>
+  <ul class="collapse">
+  <li><a href="#basic-model-estimation-1" id="toc-basic-model-estimation-1" class="nav-link" data-scroll-target="#basic-model-estimation-1">Basic Model Estimation</a></li>
+  <li><a href="#extended-model-estimation-1" id="toc-extended-model-estimation-1" class="nav-link" data-scroll-target="#extended-model-estimation-1">Extended Model Estimation</a></li>
+  <li><a href="#basic-model-estimation-2" id="toc-basic-model-estimation-2" class="nav-link" data-scroll-target="#basic-model-estimation-2">Basic Model Estimation</a></li>
+  <li><a href="#extended-model-estimation-2" id="toc-extended-model-estimation-2" class="nav-link" data-scroll-target="#extended-model-estimation-2">Extended Model Estimation</a></li>
+  </ul></li>
+  <li><a href="#western-australia" id="toc-western-australia" class="nav-link" data-scroll-target="#western-australia">Western Australia</a>
+  <ul class="collapse">
+  <li><a href="#basic-model-estimation-3" id="toc-basic-model-estimation-3" class="nav-link" data-scroll-target="#basic-model-estimation-3">Basic Model Estimation</a></li>
+  <li><a href="#extended-model-estimation-3" id="toc-extended-model-estimation-3" class="nav-link" data-scroll-target="#extended-model-estimation-3">Extended Model Estimation</a></li>
   <li><a href="#intepretations" id="toc-intepretations" class="nav-link" data-scroll-target="#intepretations">Intepretations</a></li>
+  </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -155,7 +173,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Examing the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis</h1>
+<h1 class="title">Examining the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis</h1>
 </div>
 
 
@@ -180,14 +198,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Abstract.</strong> Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach.</p>
 </blockquote>
 <blockquote class="blockquote">
-<p><strong>Keywords.</strong> Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia # Introduction</p>
+<p><strong>Keywords.</strong> Monetary policy, Unemployement, Regional Effects, Impluse Response Function, Structural Vector Autoregressions, Australia</p>
 </blockquote>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
 <p>Intro in progress</p>
-<p>Plots below</p>
+</section>
 <section id="data" class="level1">
 <h1>Data</h1>
-<p>The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.</p>
-<p>Below are plots of each of the available variables over time.</p>
+<p>The data required can be taken directly from either the Australian Bureau of Statistics or the Royal Bank of Australia, who, together, provide the required data from 1990 to 2022 on real GDP, the Cash Rate Target, Money Supply, the Consumer Price Index, and the state-specific unemployment rate for Queensland, New South Wales, Victoria, and Western Australia. Logs have been taken of real GDP, Money Supply, and the Consumer Price Index.</p>
+<p>Below are plots of each of the variables over time. There are clear trends in the data, and it is clear that the unemployment rates in each of the states are closely linked.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/plots-1.png" class="img-fluid" width="672"></p>
@@ -197,10 +217,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="preliminary-results" class="level1">
-<h1>Preliminary Results</h1>
+<section id="preliminary-data-analysis" class="level1">
+<h1>Preliminary Data Analysis</h1>
 <section id="acf-and-pacf-plots" class="level2">
 <h2 class="anchored" data-anchor-id="acf-and-pacf-plots">ACF and PACF plots</h2>
+<p>Below are the ACF and PACF plots for each of the variables. These show the memory properties of the data. Each pair of plots have similar shapes with the ACFs showing a strong positive, gradually decaying pattern, while the PACFs are all insignificant after the first lag. This suggests that many or all of the variables are likely to follow a random walk with drift process.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/(P)ACF plots-1.png" class="img-fluid" width="672"></p>
@@ -215,73 +236,59 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="index_files/figure-html/(P)ACF plots-4.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>##Integration order verification</p>
+</section>
+<section id="integration-order-verification" class="level2">
+<h2 class="anchored" data-anchor-id="integration-order-verification">Integration Order Verification</h2>
+<p>Dickey-Fuller tests were run on each of the variables to determine the integration order, results are below. All of the variables have a single unit-root except for the Cash Rate Target. This matches the interpretation from the ACF and PACF plots.</p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>                              Variable Lag.Order ADF.Statistic    p.value
-1                        Log(Real GDP)         4    -0.7618079 0.96270763
-2            Log(Consumer Price Index)         4    -2.7800487 0.25212307
-3                     Cash Rate Target         4    -4.8673605 0.01000000
-4                    Log(Money Supply)         4    -3.3477511 0.06635259
-5        Unemployment Rate: Queensland         4    -1.8629808 0.63347993
-6   Unemployment Rate: New South Wales         4    -2.8242561 0.23373972
-7          Unemployment Rate: Victoria         4    -2.0475947 0.55670942
-8 Unemployment Rate: Western Australia         4    -2.1266543 0.52383298</code></pre>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Variable"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Lag.Order"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["ADF.Statistic"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Log(Real GDP)","2":"4","3":"-0.7618079","4":"0.96270763","_rn_":"1"},{"1":"Log(Consumer Price Index)","2":"4","3":"-2.7800487","4":"0.25212307","_rn_":"2"},{"1":"Cash Rate Target","2":"4","3":"-4.8673605","4":"0.01000000","_rn_":"3"},{"1":"Log(Money Supply)","2":"4","3":"-3.3477511","4":"0.06635259","_rn_":"4"},{"1":"Unemployment Rate: Queensland","2":"4","3":"-1.8629808","4":"0.63347993","_rn_":"5"},{"1":"Unemployment Rate: New South Wales","2":"4","3":"-2.8242561","4":"0.23373972","_rn_":"6"},{"1":"Unemployment Rate: Victoria","2":"4","3":"-2.0475947","4":"0.55670942","_rn_":"7"},{"1":"Unemployment Rate: Western Australia","2":"4","3":"-2.1266543","4":"0.52383298","_rn_":"8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                              Variable Lag.Order     ADF.Statistic
-1                        Log(Real GDP)         3 -7.55334389389226
-2            Log(Consumer Price Index)         3 -3.71887022359102
-3                     Cash Rate Target       N/A               N/A
-4                    Log(Money Supply)         3  -4.0408232882447
-5        Unemployment Rate: Queensland         3 -6.54720362988815
-6   Unemployment Rate: New South Wales         3 -5.26681334164472
-7          Unemployment Rate: Victoria         3 -6.87975208928033
-8 Unemployment Rate: Western Australia         3 -7.10487731623548
-            p.value
-1              0.01
-2 0.025283494239944
-3               N/A
-4              0.01
-5              0.01
-6              0.01
-7              0.01
-8              0.01</code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>                              Variable Lag.Order ADF.Statistic p.value
-1                        Log(Real GDP)       N/A           N/A     N/A
-2            Log(Consumer Price Index)       N/A           N/A     N/A
-3                     Cash Rate Target       N/A           N/A     N/A
-4                    Log(Money Supply)       N/A           N/A     N/A
-5        Unemployment Rate: Queensland       N/A           N/A     N/A
-6   Unemployment Rate: New South Wales       N/A           N/A     N/A
-7          Unemployment Rate: Victoria       N/A           N/A     N/A
-8 Unemployment Rate: Western Australia       N/A           N/A     N/A</code></pre>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Variable"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Lag.Order"],"name":[2],"type":["chr"],"align":["left"]},{"label":["ADF.Statistic"],"name":[3],"type":["chr"],"align":["left"]},{"label":["p.value"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"Log(Real GDP)","2":"3","3":"-7.55334389389226","4":"0.01","_rn_":"1"},{"1":"Log(Consumer Price Index)","2":"3","3":"-3.71887022359102","4":"0.025283494239944","_rn_":"2"},{"1":"Cash Rate Target","2":"N/A","3":"N/A","4":"N/A","_rn_":"3"},{"1":"Log(Money Supply)","2":"3","3":"-4.0408232882447","4":"0.01","_rn_":"4"},{"1":"Unemployment Rate: Queensland","2":"3","3":"-6.54720362988815","4":"0.01","_rn_":"5"},{"1":"Unemployment Rate: New South Wales","2":"3","3":"-5.26681334164472","4":"0.01","_rn_":"6"},{"1":"Unemployment Rate: Victoria","2":"3","3":"-6.87975208928033","4":"0.01","_rn_":"7"},{"1":"Unemployment Rate: Western Australia","2":"3","3":"-7.10487731623548","4":"0.01","_rn_":"8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 </div>
 </div>
 </section>
 </section>
 <section id="methodology" class="level1">
 <h1>Methodology</h1>
-<p>Below is the Structural Vector Autoregression (SVAR) modelrequired to capture the dynamics between the variables.</p>
+<p>This paper utilizes the following Bayesian SVAR model to capture the dynamics between the variables.</p>
 <p><span class="math display">\[\begin{align}
 B_0 Y_t = b_0 + B_1 y_{t-1} +\dots +B_p y_{t-p} + u_t
 \end{align}\]</span> <span class="math display">\[\begin{align}
 u_t|Y_{t-1}~iid(0_N,I_N)
 \end{align}\]</span></p>
 <p>Where:</p>
-<p><span class="math inline">\(Y_{t}\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of endogenous variables, including the Gini coefficient, government spending, revenue, GDP, and debt.</p>
-<p><span class="math inline">\(B_0\)</span> is an <span class="math inline">\(N \times N\)</span> structural matrix capturing comtemporaneous relationships between variables.</p>
-<p><span class="math inline">\(u_t\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of independent structural shocks, conditional on <span class="math inline">\(Y_{t-1}\)</span>.</p>
-<p>Using this model I will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.</p>
-<p>Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.</p>
+<ul>
+<li><p><span class="math inline">\(Y_{t}\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of endogenous variables described above.</p></li>
+<li><p><span class="math inline">\(B_0\)</span> is an <span class="math inline">\(N \times N\)</span> structural matrix capturing contemporaneous relationships between variables.</p></li>
+<li><p><span class="math inline">\(u_t\)</span> is an <span class="math inline">\(N\times 1\)</span> vector of independent structural shocks, conditional on <span class="math inline">\(Y_{t-1}\)</span>.</p></li>
+</ul>
+<p>The estimation of this model and subsequent calculation of the impulse response functions is the primary analysis in this paper.</p>
+<p>The structural form model can be represented in it’s reduced form by:</p>
+<p><span class="math display">\[\begin{align}
+\   y_t &amp;= \mu_0 + A_1 y_{t-1} + \dots + A_p y_{t-p} + \varepsilon_t\\
+\end{align}\]</span> <span class="math display">\[\begin{align}
+\ \varepsilon_t| Y_{t-1} \sim _{iid} ( 0, \Sigma)\\
+\end{align}\]</span> <span class="math display">\[\begin{align}
+\Sigma &amp;= B_0^{-1}B_0^{-1'}\\
+\end{align}\]</span></p>
 </section>
 <section id="modelling-framework" class="level1">
 <h1>Modelling Framework</h1>
 <section id="basic-model" class="level2">
 <h2 class="anchored" data-anchor-id="basic-model">Basic Model</h2>
-<p>Starting with the reduced form, we can present the likelihood function as a normal-inverse Wishart distribution for <span class="math inline">\((A,\Sigma)\)</span></p>
+<p>Presenting the likelihood function as a normal-inverse Wishart distribution for <span class="math inline">\((A,\Sigma)\)</span> using matrix notation, we have:</p>
 <p><span class="math display">\[\begin{gather}
 Y = XA + E \\
 \\ E|X \sim MN_{T \times N}(0_{T \times N},\Sigma,I_T)
@@ -326,267 +333,257 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 \end{gather}\]</span></p>
 <p>The following function uses the Minnesota prior to set priors for <span class="math inline">\(V\)</span>, <span class="math inline">\(A\)</span>, <span class="math inline">\(\nu,\)</span> and <span class="math inline">\(S\)</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>calc.priors <span class="ot">&lt;-</span> <span class="cf">function</span>(p, X, Y){</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  Sigma.hat <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(Y))</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Setting Kappas</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  kappa<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fl">0.02</span><span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  kappa<span class="fl">.2</span> <span class="ot">&lt;-</span><span class="dv">100</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  K <span class="ot">=</span> <span class="dv">1</span> <span class="sc">+</span> (p<span class="sc">*</span>N)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  A.prior     <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(A.hat),<span class="fu">ncol</span>(A.hat))</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  A.prior[<span class="dv">2</span><span class="sc">:</span>(N<span class="sc">+</span><span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  V.prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa<span class="fl">.2</span>,kappa<span class="fl">.1</span><span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  S.prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">diag</span>(Sigma.hat))</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  nu.prior    <span class="ot">=</span> N<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  priors <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">A.prior =</span> A.prior , <span class="at">V.prior=</span>V.prior, <span class="at">S.prior=</span>S.prior, <span class="at">nu.prior=</span>nu.prior)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(priors)</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>calc.priors <span class="ot">&lt;-</span> <span class="cf">function</span>(p, X, Y){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  A.hat <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  Sigma.hat <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">ncol</span>(Y))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Setting Kappas</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  kappa<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fl">0.02</span><span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  kappa<span class="fl">.2</span> <span class="ot">&lt;-</span><span class="dv">100</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  K <span class="ot">=</span> <span class="dv">1</span> <span class="sc">+</span> (p<span class="sc">*</span>N)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  A.prior     <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(A.hat),<span class="fu">ncol</span>(A.hat))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  A.prior[<span class="dv">2</span><span class="sc">:</span>(N<span class="sc">+</span><span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  V.prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa<span class="fl">.2</span>,kappa<span class="fl">.1</span><span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  S.prior     <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">diag</span>(Sigma.hat))</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  nu.prior    <span class="ot">=</span> N<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  priors <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">A.prior =</span> A.prior , <span class="at">V.prior=</span>V.prior, <span class="at">S.prior=</span>S.prior, <span class="at">nu.prior=</span>nu.prior)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(priors)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using these priors and the function below, we can calculate posteriors <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, and <span class="math inline">\(\Sigma\)</span></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>calc.posteriors <span class="ot">&lt;-</span> <span class="cf">function</span> (p, S, X, Y, priors){</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  A.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>A.prior</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  V.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>V.prior</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  S.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>S.prior</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  nu.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>nu.prior</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  V.bar.inv   <span class="ot">=</span> (<span class="fu">t</span>(X)<span class="sc">%*%</span>X) <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  V.bar       <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  A.bar       <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  nu.bar      <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  S.bar       <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  S.bar.inv   <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  Sigma.posterior.inv   <span class="ot">=</span> <span class="fu">rWishart</span>(S, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior.inv,<span class="dv">3</span>,solve)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>L                 <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>B.posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="fu">c</span>(N,N,S))</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>B1.posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>,<span class="fu">c</span>(N,(<span class="dv">1</span><span class="sc">+</span>N<span class="sc">*</span>p),S))</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  chol.sigma <span class="ot">=</span> <span class="fu">chol</span>(Sigma.posterior[,,s])</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  A.posterior[,,s]<span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span>chol.sigma</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>  B.posterior[,,s]<span class="ot">=</span> <span class="fu">t</span>(chol.sigma)</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  B1.posterior[,,s]<span class="ot">=</span> B.posterior[,,s]<span class="sc">%*%</span><span class="fu">t</span>(A.posterior[,,s])</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  posterior <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior =</span> A.posterior, <span class="at">B.posterior =</span> B.posterior, <span class="at">Sigma.posterior =</span> Sigma.posterior, <span class="at">B1.posterior =</span> B1.posterior)</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(posterior)</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>calc.posteriors <span class="ot">&lt;-</span> <span class="cf">function</span> (p, S, X, Y, priors){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(Y)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  A.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>A.prior</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  V.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>V.prior</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  S.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>S.prior</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  nu.prior <span class="ot">&lt;-</span> priors<span class="sc">$</span>nu.prior</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  V.bar.inv   <span class="ot">=</span> (<span class="fu">t</span>(X)<span class="sc">%*%</span>X) <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  V.bar       <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  A.bar       <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  nu.bar      <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  S.bar       <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  S.bar.inv   <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  Sigma.posterior.inv   <span class="ot">=</span> <span class="fu">rWishart</span>(S, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior.inv,<span class="dv">3</span>,solve)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  L                 <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  B.posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>, <span class="fu">c</span>(N,N,S))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  B1.posterior <span class="ot">=</span> <span class="fu">array</span>(<span class="cn">NA</span>,<span class="fu">c</span>(N,(<span class="dv">1</span><span class="sc">+</span>N<span class="sc">*</span>p),S))</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    chol.sigma <span class="ot">=</span> <span class="fu">chol</span>(Sigma.posterior[,,s])</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    A.posterior[,,s]<span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span>chol.sigma</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    B.posterior[,,s]<span class="ot">=</span> <span class="fu">t</span>(chol.sigma)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    B1.posterior[,,s]<span class="ot">=</span> B.posterior[,,s]<span class="sc">%*%</span><span class="fu">t</span>(A.posterior[,,s])</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  posterior <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior =</span> A.posterior, <span class="at">B.posterior =</span> B.posterior, <span class="at">Sigma.posterior =</span> Sigma.posterior, <span class="at">B1.posterior =</span> B1.posterior)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(posterior)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="extended-model-formulation" class="level2">
 <h2 class="anchored" data-anchor-id="extended-model-formulation">Extended model formulation</h2>
-<p>In the extended model I augment the system using the ‘sum of coefficients’ and ‘dummy initial observation’ prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.</p>
-<p>The ‘dummy initial observation’ prior adds a single dummy observation such that all values are set equal to the averages of intial conditions, up to a scaling factor.</p>
+<p>To extend the model I augment the system using the ‘sum of coefficients’ and ‘dummy initial observation’ prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.</p>
+<p>The ‘dummy initial observation’ prior adds a single dummy observation such that all values are set equal to the averages of initial conditions, up to a scaling factor.</p>
+<p>In order to practically generate the additional rows the following steps should be taken.</p>
+<p>Firstly the average of lagged values needs to be calculated, <span class="math inline">\(y.bar\)</span>. This is done by finding the mean of the first <span class="math inline">\(p\)</span> values in the data. Next, values of of the scaling factors need to be selected, typically, as I have done, values equal to 1 are chosen.</p>
+<p>Once this has been done, the rows can be created. The fine details of how this is done can be found in Carriero and Clark (2013).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prior.ex <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">p =</span> <span class="dv">1</span>, <span class="at">lambda_3 =</span> <span class="dv">1</span>, <span class="at">lambda_4 =</span> <span class="dv">1</span>){</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">=</span> (N<span class="sc">*</span>p)<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  in.obvs.Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(data[<span class="dv">1</span><span class="sc">:</span>p,], <span class="at">ncol =</span> N)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  y.bar     <span class="ot">=</span> <span class="fu">colMeans</span>(in.obvs.Y)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  Y_star    <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">diag</span>(y.bar)<span class="sc">/</span>lambda_3, y.bar<span class="sc">/</span>lambda_4)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  X_star    <span class="ot">=</span> <span class="fu">as.matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, N), <span class="dv">1</span><span class="sc">/</span>lambda_4))</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) {</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    X_star  <span class="ot">=</span> <span class="fu">cbind</span>(Y_star, X_star)</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  ext.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">YN =</span> Y_star, <span class="at">XN =</span> X_star)</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ext.data)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>prior.ex <span class="ot">&lt;-</span> <span class="cf">function</span>(data, p, <span class="at">lambda_3 =</span> <span class="dv">1</span>, <span class="at">lambda_4 =</span> <span class="dv">1</span>){</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">ncol</span>(data)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">=</span> (N<span class="sc">*</span>p)<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  in.obvs.Y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(data[<span class="dv">1</span><span class="sc">:</span>p,], <span class="at">ncol =</span> N)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  y.bar     <span class="ot">=</span> <span class="fu">colMeans</span>(in.obvs.Y)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  Y_star    <span class="ot">=</span> <span class="fu">rbind</span>(<span class="fu">diag</span>(y.bar)<span class="sc">/</span>lambda_3, y.bar<span class="sc">/</span>lambda_4)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  X_star    <span class="ot">=</span> <span class="fu">as.matrix</span>(<span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, N), <span class="dv">1</span><span class="sc">/</span>lambda_4))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    X_star  <span class="ot">=</span> <span class="fu">cbind</span>(Y_star, X_star)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  ext.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">YN =</span> Y_star, <span class="at">XN =</span> X_star)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ext.data)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="reproduction-for-artificial-data" class="level2">
-<h2 class="anchored" data-anchor-id="reproduction-for-artificial-data">Reproduction for artificial data</h2>
-<p>The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.</p>
+</section>
+<section id="reproduction-for-artificial-data" class="level1">
+<h1>Reproduction for artificial data</h1>
+<p>The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. The results from this are very close to the true parameters of the model, and thus the basic and extended models are both working as intended.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Basic Model Test</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">apply</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">ncol =</span> <span class="dv">2</span>), <span class="dv">2</span>, cumsum)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> y[<span class="dv">2</span><span class="sc">:</span><span class="dv">1000</span>,]</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, y[<span class="dv">1</span><span class="sc">:</span><span class="dv">999</span>,])</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">1000</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X, <span class="at">Y =</span> Y)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>posteriors <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X, <span class="at">Y=</span> Y, priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Basic Model Test</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">apply</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">2000</span>), <span class="at">ncol =</span> <span class="dv">2</span>), <span class="dv">2</span>, cumsum)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> y[<span class="dv">2</span><span class="sc">:</span><span class="dv">1000</span>,]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(<span class="dv">1</span>, y[<span class="dv">1</span><span class="sc">:</span><span class="dv">999</span>,])</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>S <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>priors <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X, <span class="at">Y =</span> Y)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>posteriors <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X, <span class="at">Y=</span> Y, priors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]   [,2]
-[1,] -0.079 -0.072
-[2,]  1.000  0.005
-[3,] -0.002  0.989</code></pre>
-</div>
-</div>
-<p>B.posterior:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1] [,2]
-[1,]  1.008 0.00
-[2,] -0.008 1.02</code></pre>
-</div>
-</div>
-<p>Sigma.posterior:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]
-[1,]  1.016 -0.008
-[2,] -0.008  1.042</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Extended model Test</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>inital.dum <span class="ot">=</span> <span class="fu">prior.ex</span>(y, <span class="at">p =</span> <span class="dv">1</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>XN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>XN</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>YN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>YN</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>X.ex <span class="ot">&lt;-</span> <span class="fu">rbind</span>(XN, X)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>Y.ex <span class="ot">&lt;-</span> <span class="fu">rbind</span>(YN, Y)</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>priors.ext <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X.ex, <span class="at">Y =</span> Y.ex)</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>posteriors.ext <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p=</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X.ex,<span class="at">Y=</span>Y.ex, <span class="at">priors =</span> priors.ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>A.posterior:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]
-[1,] -0.077 -0.076
-[2,]  1.000  0.005
-[3,] -0.002  0.989</code></pre>
+[1,] -0.108  0.245
+[2,]  0.995 -0.002
+[3,]  0.002  0.997</code></pre>
 </div>
 </div>
 <p>B.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>       [,1]  [,2]
-[1,]  1.011 0.000
-[2,] -0.015 1.022</code></pre>
+[1,]  1.020 0.000
+[2,] -0.065 1.014</code></pre>
+</div>
+</div>
+<p>Sigma.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]
+[1,]  1.041 -0.066
+[2,] -0.066  1.035</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">##Extended model Test</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>inital.dum <span class="ot">=</span> <span class="fu">prior.ex</span>(y, <span class="at">p =</span> <span class="dv">1</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>XN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>XN</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>YN <span class="ot">&lt;-</span> inital.dum<span class="sc">$</span>YN</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>X.ex <span class="ot">&lt;-</span> <span class="fu">rbind</span>(XN, X)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>Y.ex <span class="ot">&lt;-</span> <span class="fu">rbind</span>(YN, Y)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>priors.ext <span class="ot">=</span> <span class="fu">calc.priors</span>(<span class="at">p =</span> <span class="dv">1</span>, <span class="at">X =</span> X.ex, <span class="at">Y =</span> Y.ex)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>posteriors.ext <span class="ot">=</span> <span class="fu">calc.posteriors</span>(<span class="at">p=</span> <span class="dv">1</span>, <span class="at">S =</span> <span class="dv">1000</span>, <span class="at">X =</span> X.ex,<span class="at">Y=</span>Y.ex, <span class="at">priors =</span> priors.ext)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]   [,2]
+[1,] -0.105  0.242
+[2,]  0.995 -0.002
+[3,]  0.002  0.997</code></pre>
+</div>
+</div>
+<p>B.posterior:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>       [,1]  [,2]
+[1,]  1.019 0.000
+[2,] -0.063 1.012</code></pre>
 </div>
 </div>
 <p>Sigma.posterior:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>        [,1]    [,2]
-[1,]  1.0231 -0.0151
-[2,] -0.0151  1.0460</code></pre>
+[1,]  1.0392 -0.0646
+[2,] -0.0646  1.0289</code></pre>
 </div>
 </div>
 </section>
-<section id="empirical-estimation" class="level2">
-<h2 class="anchored" data-anchor-id="empirical-estimation">Empirical Estimation</h2>
-<p>A.posterior:</p>
+<section id="empirical-estimation" class="level1">
+<h1>Empirical Estimation</h1>
+<p>Below are the impulse response functions for each of the different systems resulting from a shock to the cash rate target, representing a change in monetary policy. For each system there are two sets of IRFs, the first is calculated using the basic model, the second uses the extended model.</p>
+<section id="queensland" class="level2">
+<h2 class="anchored" data-anchor-id="queensland">Queensland</h2>
+<section id="basic-model-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="basic-model-estimation">Basic Model Estimation</h3>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]   [,3]  [,4]   [,5]
- [1,] 0.007 0.005  0.056 0.025 -0.030
- [2,] 1.000 0.000  0.000 0.000  0.000
- [3,] 0.000 1.000  0.000 0.000  0.000
- [4,] 0.000 0.000  0.989 0.000  0.003
- [5,] 0.000 0.000  0.002 1.000  0.000
- [6,] 0.000 0.000 -0.008 0.000  0.994
- [7,] 0.000 0.000  0.000 0.000  0.000
- [8,] 0.000 0.000  0.000 0.000  0.000
- [9,] 0.000 0.000 -0.004 0.000  0.001
-[10,] 0.000 0.000  0.000 0.000  0.000
-[11,] 0.000 0.000 -0.001 0.000 -0.001
-[12,] 0.000 0.000  0.000 0.000  0.000
-[13,] 0.000 0.000  0.000 0.000  0.000
-[14,] 0.000 0.000 -0.002 0.000  0.000
-[15,] 0.000 0.000  0.000 0.000  0.000
-[16,] 0.000 0.000  0.000 0.000 -0.001
-[17,] 0.000 0.000  0.000 0.000  0.000
-[18,] 0.000 0.000  0.000 0.000  0.000
-[19,] 0.000 0.000 -0.001 0.000  0.000
-[20,] 0.000 0.000  0.000 0.000  0.000
-[21,] 0.000 0.000  0.000 0.000  0.000
-[22,] 0.000 0.000  0.000 0.000  0.000
-[23,] 0.000 0.000  0.000 0.000  0.000
-[24,] 0.000 0.000 -0.001 0.000  0.000
-[25,] 0.000 0.000  0.000 0.000  0.000
-[26,] 0.000 0.000  0.000 0.000  0.000</code></pre>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>B.posterior:</p>
+</section>
+<section id="extended-model-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="extended-model-estimation">Extended Model Estimation</h3>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]   [,2]   [,3]  [,4]  [,5]
-[1,]  0.089  0.000  0.000 0.000 0.000
-[2,]  0.000  0.088  0.000 0.000 0.000
-[3,]  0.007  0.011  0.484 0.000 0.000
-[4,]  0.000  0.000 -0.008 0.093 0.000
-[5,] -0.024 -0.002 -0.090 0.000 0.457</code></pre>
-</div>
-</div>
-<p>Sigma.posterior:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>       [,1]  [,2]   [,3]   [,4]   [,5]
-[1,]  0.008 0.000  0.001  0.000 -0.002
-[2,]  0.000 0.008  0.001  0.000  0.000
-[3,]  0.001 0.001  0.239 -0.004 -0.044
-[4,]  0.000 0.000 -0.004  0.009  0.001
-[5,] -0.002 0.000 -0.044  0.001  0.225</code></pre>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
 </section>
-<section id="qld" class="level1">
-<h1>QLD</h1>
+<section id="new-south-wales" class="level2">
+<h2 class="anchored" data-anchor-id="new-south-wales">New South Wales</h2>
+<section id="basic-model-estimation-1" class="level3">
+<h3 class="anchored" data-anchor-id="basic-model-estimation-1">Basic Model Estimation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="extended-model-estimation-1" class="level3">
+<h3 class="anchored" data-anchor-id="extended-model-estimation-1">Extended Model Estimation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>##Victoria</p>
+</section>
+<section id="basic-model-estimation-2" class="level3">
+<h3 class="anchored" data-anchor-id="basic-model-estimation-2">Basic Model Estimation</h3>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<section id="nsw" class="level3">
-<h3 class="anchored" data-anchor-id="nsw">NSW</h3>
+</section>
+<section id="extended-model-estimation-2" class="level3">
+<h3 class="anchored" data-anchor-id="extended-model-estimation-2">Extended Model Estimation</h3>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
-<section id="vic" class="level3">
-<h3 class="anchored" data-anchor-id="vic">VIC</h3>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
 </section>
-<section id="wa" class="level3">
-<h3 class="anchored" data-anchor-id="wa">WA</h3>
+<section id="western-australia" class="level2">
+<h2 class="anchored" data-anchor-id="western-australia">Western Australia</h2>
+<section id="basic-model-estimation-3" class="level3">
+<h3 class="anchored" data-anchor-id="basic-model-estimation-3">Basic Model Estimation</h3>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="extended-model-estimation-3" class="level3">
+<h3 class="anchored" data-anchor-id="extended-model-estimation-3">Extended Model Estimation</h3>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -595,6 +592,7 @@ p(\Sigma|Y, X) = IW_{N}(\bar{S},\bar{\nu})
 <p>Each of the impulse response functions show how variables react to a shock to Log real GDP. There are four different systems, one for each of the key Australian states.</p>
 <p>The goal of this paper is to find how different states react to changes in monetary policy, unfortunately I do not yield any results that are statistically different from zero, other than the effect of a shock to GDP on itself.</p>
 <p>Looking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the impact of real GDP on unemployment levels is lowest in New South Wales. However, as stated earlier, the results are not statistically different from zero.</p>
+</section>
 </section>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>

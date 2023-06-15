@@ -16,12 +16,13 @@ bibliography: references.bib
 
 Intro in progress
 
-Plots below
+
 
 # Data
 
 ```{r load packages}
 #| warning: false
+#| echo: false
 library(lubridate)
 library(xtable)
 library(mvtnorm)
@@ -102,9 +103,9 @@ load(file = "ProjectData.RData")
 ```
 
 
-The data required can all be taken directly from the Australian Bureau of Statistics who provide data from 1959 to 2022 on GDP, government spending, government revenue, and debt data from 1988. They also provide data relating to the Gini coefficient, however I am unable to find the series ID for this at present.
+The data required can be taken directly from either the Australian Bureau of Statistics or the Royal Bank of Australia, who, together, provide the required data from 1990 to 2022 on real GDP, the Cash Rate Target, Money Supply, the Consumer Price Index, and the state-specific unemployment rate for Queensland, New South Wales, Victoria, and Western Australia. Logs have been taken of real GDP, Money Supply, and the Consumer Price Index.
 
-Below are plots of each of the available variables over time.
+Below are plots of each of the variables over time. There are clear trends in the data, and it is clear that the unemployment rates in each of the states are closely linked.
 
 ```{r plots}
 #| echo: false
@@ -125,9 +126,10 @@ for (i in 1:8){
 
 ```
 
-# Preliminary Results
+# Preliminary Data Analysis
 
 ## ACF and PACF plots
+Below are the ACF and PACF plots for each of the variables. These show the memory properties of the data. Each pair of plots have similar shapes with the ACFs showing a strong positive, gradually decaying pattern, while the PACFs are all insignificant after the first lag. This suggests that many or all of the variables are likely to follow a random walk with drift process.
 
 ```{r (P)ACF plots}
 
@@ -142,7 +144,7 @@ pacf(data[,i], main = paste(names[i]))
 ```
 
 ## Integration Order Verification
-
+Dickey-Fuller tests were run on each of the variables to determine the integration order, results are below. All of the variables have a single unit-root except for the Cash Rate Target. This matches the interpretation from the ACF and PACF plots.
 ```{r Integration}
 #| echo: false
 #| message: false
@@ -176,20 +178,7 @@ results.adf1[i,3] <- "N/A"
 results.adf1[i,4] <- "N/A" }
 }
 
-results.adf2 <- data.frame("Variable" = character(),"Lag Order" = numeric(), "ADF Statistic" = numeric(), "p value" = numeric())
-for (i in 1:8){
-  if (results.adf1[i,4]>0.05 & results.adf1[i,4]<1){
-diff_adf = tseries::adf.test(diff(diff(data[,i])), k = 3)
-results.adf2[i,1] <- paste(names[i])
-results.adf2[i,2] <- diff_adf[2]
-results.adf2[i,3] <- diff_adf[1]
-results.adf2[i,4] <- diff_adf[4]
-  }else{
-results.adf2[i,1] <- paste(names[i])
-results.adf2[i,2] <- "N/A"
-results.adf2[i,3] <- "N/A"
-results.adf2[i,4] <- "N/A" }
-}
+
 
 # print(results.adf0)
 # print(results.adf1)
@@ -197,13 +186,13 @@ results.adf2[i,4] <- "N/A" }
 
 rmarkdown::paged_table(results.adf0)
 rmarkdown::paged_table(results.adf1)
-rmarkdown::paged_table(results.adf2)
+
 
 ```
 
 # Methodology
 
-Below is the Structural Vector Autoregression (SVAR) model required to capture the dynamics between the variables.
+This paper utilizes the following Bayesian SVAR model to capture the dynamics between the variables. 
 
 
 \begin{align}
@@ -215,32 +204,48 @@ u_t|Y_{t-1}~iid(0_N,I_N)
 
 Where:
 
-$Y_{t}$ is an $N\times 1$ vector of endogenous variables, including the Gini coefficient, government spending, revenue, GDP, and debt.
+* $Y_{t}$ is an $N\times 1$ vector of endogenous variables described above.
 
-$B_0$ is an $N \times N$ structural matrix capturing comtemporaneous relationships between variables.
+* $B_0$ is an $N \times N$ structural matrix capturing contemporaneous relationships between variables.
 
-$u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on $Y_{t-1}$.
+* $u_t$ is an $N\times 1$ vector of independent structural shocks, conditional on $Y_{t-1}$.
 
-Using this model will give me an insight into dynamic relationships between government spending, revenue and income inequality. Impulse response functions (IRFs) and forecast error variance decompositions (FEVDs) will be used to analyse the effects of fiscal policy on income inequality.
+The estimation of this model and subsequent calculation of the impulse response functions is the primary analysis in this paper.
 
-Using both of these techniques together, I will gain an understanding of the long- and short-run impacts of shocks to government spending and taxation.
+The structural form model can be represented in it's reduced form by:
+
+$$\begin{align}
+\   y_t &= \mu_0 + A_1 y_{t-1} + \dots + A_p y_{t-p} + \varepsilon_t\\
+\end{align}$$
+$$\begin{align}
+\ \varepsilon_t| Y_{t-1} \sim _{iid} ( 0, \Sigma)\\
+\end{align}$$
+$$\begin{align}
+\Sigma &= B_0^{-1}B_0^{-1'}\\
+\end{align}$$
+
+
+
+
 
 
 # Modelling Framework
 
 ## Basic Model
 
-Starting with the reduced form, we can present the likelihood function as a normal-inverse Wishart distribution for $(A,\Sigma)$
+Presenting the likelihood function as a normal-inverse Wishart distribution for $(A,\Sigma)$ using matrix notation, we have:
 
-\begin{gather}
+
+
+$$\begin{gather}
 Y = XA + E \\
 \\ E|X \sim MN_{T \times N}(0_{T \times N},\Sigma,I_T) 
-\end{gather}
+\end{gather}$$
 
-\begin{gather}
+$$\begin{gather}
 L(A,\Sigma|Y,X) \propto det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(Y-XA)'(Y-XA) \right] \right\} \\
 \\ = det(\Sigma)^{-\frac{T}{2}} exp \left\{-\frac{1}{2} tr \left[ \Sigma^{-1}(A-\hat{A})'X'X(A-\hat{A}) \right] \right\} exp \left\{-\frac{1}{2} tr \left[\Sigma^{-1}(Y-X \hat{A})'(Y-X \hat{A}) \right] \right\} \\
-\end{gather}
+\end{gather}$$
 
 where:
 
@@ -381,13 +386,18 @@ calc.posteriors <- function (p, S, X, Y, priors){
 
 ## Extended model formulation
 
-In the extended model I augment the system using the 'sum of coefficients' and 'dummy initial observation' prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.
+To extend the model I augment the system using the 'sum of coefficients' and 'dummy initial observation' prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.
 
-The 'dummy initial observation' prior adds a single dummy observation such that all values are set equal to the averages of intial conditions, up to a scaling factor.
+The 'dummy initial observation' prior adds a single dummy observation such that all values are set equal to the averages of initial conditions, up to a scaling factor.
 
+In order to practically generate the additional rows the following steps should be taken.
+
+Firstly the average of lagged values needs to be calculated, $y.bar$. This is done by finding the mean of the first $p$ values in the data. Next, values of of the scaling factors need to be selected, typically, as I have done, values equal to 1 are chosen.
+
+Once this has been done, the rows can be created. The fine details of how this is done can be found in Carriero and Clark (2013).
 ```{R}
 #| echo: true
-prior.ex <- function(data, p = 1, lambda_3 = 1, lambda_4 = 1){
+prior.ex <- function(data, p, lambda_3 = 1, lambda_4 = 1){
   
   N = ncol(data)
   M = (N*p)+1
@@ -410,9 +420,9 @@ prior.ex <- function(data, p = 1, lambda_3 = 1, lambda_4 = 1){
 ```
 
 
-## Reproduction for artificial data 
+# Reproduction for artificial data 
 
-The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2.
+The above functions are tested using data containing 1000 observations simulated from a bi-variate Gaussian random walk process with the covariance matrix equal to the identity matrix of order 2. The results from this are very close to the true parameters of the model, and thus the basic and extended models are both working as intended.
 ```{R}
 #| echo: true
 
@@ -469,7 +479,12 @@ Sigma.posterior:
 ```{R}
 round(apply(posteriors.ext$Sigma.posterior, 1:2, mean), 4)
 ```
-## Empirical Estimation
+# Empirical Estimation
+Below are the impulse response functions for each of the different systems resulting from a shock to the cash rate target, representing a change in monetary policy. For each system there are two sets of IRFs, the first is calculated using the basic model, the second uses the extended model.
+
+## Queensland
+
+
 
 ```{R} 
 ##Create Y and X for QLD
@@ -493,107 +508,16 @@ emp.initial.dum <- prior.ex(data = y, p)
 X.emp <- rbind(emp.initial.dum$XN, X)
 Y.emp <- rbind(emp.initial.dum$YN, Y)
 
-priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
+priors.emp = calc.priors(p, X = X, Y = Y)
 posteriors.emp.qld = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
 
-```
-
-```{R} 
-##Create Y and X for NSW
-
-
-p = 5
-y = ts(data[c(1:4, 6)])
-T = nrow(y)
-Y = y[(p+1):T,]
-
-X       = matrix(1,nrow(Y),1)
-
-for (i in 1:p){
-  X     = cbind(X,y[(p+1):T-i,])
-}
-
-A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
-Sigma.hat = diag(2)
-
-emp.initial.dum <- prior.ex(data = y, p)
-X.emp <- rbind(emp.initial.dum$XN, X)
-Y.emp <- rbind(emp.initial.dum$YN, Y)
-
-priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
-posteriors.emp.nsw = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+priors.emp.ext = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.qld.ext = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
 
 ```
-
-```{R} 
-##Create Y and X for VIC
-
-
-p = 5
-y = ts(data[c(1:4, 7)])
-T = nrow(y)
-Y = y[(p+1):T,]
-
-X       = matrix(1,nrow(Y),1)
-
-for (i in 1:p){
-  X     = cbind(X,y[(p+1):T-i,])
-}
-
-A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
-Sigma.hat = diag(2)
-
-emp.initial.dum <- prior.ex(data = y, p)
-X.emp <- rbind(emp.initial.dum$XN, X)
-Y.emp <- rbind(emp.initial.dum$YN, Y)
-
-priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
-posteriors.emp.vic = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
-
-```
-
-```{R} 
-##Create Y and X for WA
-
-
-p = 5
-y = ts(data[c(1:4, 8)])
-T = nrow(y)
-Y = y[(p+1):T,]
-
-X       = matrix(1,nrow(Y),1)
-
-for (i in 1:p){
-  X     = cbind(X,y[(p+1):T-i,])
-}
-
-A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
-Sigma.hat = diag(2)
-
-emp.initial.dum <- prior.ex(data = y, p)
-X.emp <- rbind(emp.initial.dum$XN, X)
-Y.emp <- rbind(emp.initial.dum$YN, Y)
-
-priors.emp = calc.priors(p, X = X.emp, Y = Y.emp)
-posteriors.emp.wa = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
-
-```
-
-A.posterior:
+### Basic Model Estimation
 ```{R}
-round(apply(posteriors.emp.qld$A.posterior, 1:2, mean),3)
-```
-B.posterior:
-```{R}
-round(apply(posteriors.emp.qld$B.posterior, 1:2, mean),3)
-```
-Sigma.posterior:
-```{R}
-round(apply(posteriors.emp.qld$Sigma.posterior, 1:2, mean),3)
-```
-# QLD
-```{R}
-#IRFs
+#IRFs QLD basic
 A.posterior <- posteriors.emp.qld$A.posterior
 B.posterior <- posteriors.emp.qld$B.posterior
 
@@ -672,14 +596,112 @@ for (n in 1:N){
 
 
 ```
-
-### NSW
+### Extended Model Estimation
 ```{R}
-#IRFs
+#IRFs QLD ext
+A.posterior <- posteriors.emp.qld.ext$A.posterior
+B.posterior <- posteriors.emp.qld.ext$B.posterior
+
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
+
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
+
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: Queensland"
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+hh          = 1:21
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
+
+
+
+
+
+
+```
+## New South Wales
+```{R} 
+##Create Y and X for NSW
+
+
+p = 5
+y = ts(data[c(1:4, 6)])
+T = nrow(y)
+Y = y[(p+1):T,]
+
+X       = matrix(1,nrow(Y),1)
+
+for (i in 1:p){
+  X     = cbind(X,y[(p+1):T-i,])
+}
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+
+emp.initial.dum <- prior.ex(data = y, p)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
+
+priors.emp = calc.priors(p, X = X, Y = Y)
+posteriors.emp.nsw = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+priors.emp.ext = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.nsw.ext = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+```
+
+
+
+### Basic Model Estimation
+```{R}
+#IRFs NSW
 A.posterior <- posteriors.emp.nsw$A.posterior
 B.posterior <- posteriors.emp.nsw$B.posterior
-
-
 
 h = 20
 S = 1000
@@ -710,29 +732,22 @@ for (s in 1:S){
   }
 }
 FEVD.posterior    = 100*FEVD.posterior
-```
 
 
-```{r save irf_fevd}
 # save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
 save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
-```
-
-
-```{r load irf_fevd}
 load("irf-fevd-k1.RData")
-```
 
 
-### IRFs
+
 IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
 IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
-
 rownames(IRFs.k1) = colnames(Y)
 rownames(IRFs.k1)[5] = "Unemployment Rate: New South Wales"
 
 IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
-hh          = 1:21
+hh          = 1:(h+1)
+
 
 par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
 for (n in 1:N){
@@ -752,9 +767,113 @@ for (n in 1:N){
 
 
 ```
-### VIC
+### Extended Model Estimation
 ```{R}
-#IRFs
+#IRFs NSW
+A.posterior <- posteriors.emp.nsw$A.posterior
+B.posterior <- posteriors.emp.nsw$B.posterior
+
+h = 20
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
+
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
+
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: New South Wales"
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+hh          = 1:(h+1)
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
+
+
+
+
+
+
+```
+
+
+## Victoria
+
+```{R} 
+##Create Y and X for VIC
+
+
+p = 5
+y = ts(data[c(1:4, 7)])
+T = nrow(y)
+Y = y[(p+1):T,]
+
+X       = matrix(1,nrow(Y),1)
+
+for (i in 1:p){
+  X     = cbind(X,y[(p+1):T-i,])
+}
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+
+emp.initial.dum <- prior.ex(data = y, p)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
+
+priors.emp = calc.priors(p, X = X, Y = Y)
+posteriors.emp.vic = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+priors.emp.ext = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.vic.ext = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+```
+
+### Basic Model Estimation
+```{R}
+#IRFs VIC
 A.posterior <- posteriors.emp.vic$A.posterior
 B.posterior <- posteriors.emp.vic$B.posterior
 
@@ -820,32 +939,109 @@ for (n in 1:N){
 }
 
 ```
+### Extended Model Estimation
+```{R}
+#IRFs VIC
+A.posterior <- posteriors.emp.vic.ext$A.posterior
+B.posterior <- posteriors.emp.vic.ext$B.posterior
 
 
-### FEVD
-```{r}
-hh            = 1:(h+1)
-fevd.unemQ  = apply(FEVD.posterior[5,,,],1:2,mean)
-fevd.unemQ  = rbind(rep(0,h+1),apply(fevd.unemQ,2,cumsum))
 
-# fevd.au.p     = apply(FEVD.posterior[9,,,],1:2,mean)
-# fevd.au.p     = rbind(rep(0,h+1),apply(fevd.au.p,2,cumsum))
 
-colors = c("deepskyblue1","deepskyblue2","deepskyblue","deepskyblue3","deepskyblue4","dodgerblue",
-           "maroon1","maroon","maroon2","magenta","maroon3","maroon4")
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
 
-par(mar=rep(4,4),cex.axis=1, cex.lab=0.8)
-plot(hh,fevd.unemQ[1,], type="n", ylim=c(0,100), axes=FALSE, xlab="", ylab="")
-axis(1,c(1,2,5,7,9,13,17),c("","1 quarter","1 year","6 quarters", "2 years", "3 years", "4 years"))
-axis(2,c(0,50,100),c("","FEVD[unem.Q]",""))
-for (n in 1:N){
-  polygon(c(hh,(h+1):1), c(fevd.unemQ[n,hh],fevd.unemQ[n+1,(h+1):1]), col=colors[n],border=colors[n])
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
 }
-axis(4, (0.5*(fevd.unemQ[(1:N),(h+1)]+fevd.unemQ[2:(N+1),(h+1)]))[c(4,5)], c("au.mps","unem.Q"))
+FEVD.posterior    = 100*FEVD.posterior
 
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: Victoria"
+
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
 
 ```
-### WA
+
+## Western Australia
+
+```{R} 
+
+##Create Y and X for WA
+
+
+p = 5
+y = ts(data[c(1:4, 8)])
+T = nrow(y)
+Y = y[(p+1):T,]
+
+X       = matrix(1,nrow(Y),1)
+
+for (i in 1:p){
+  X     = cbind(X,y[(p+1):T-i,])
+}
+
+A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)
+Sigma.hat = diag(2)
+
+emp.initial.dum <- prior.ex(data = y, p)
+X.emp <- rbind(emp.initial.dum$XN, X)
+Y.emp <- rbind(emp.initial.dum$YN, Y)
+
+priors.emp = calc.priors(p, X = X, Y = Y)
+posteriors.emp.wa = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+priors.emp.ext = calc.priors(p, X = X.emp, Y = Y.emp)
+posteriors.emp.wa.ext = calc.posteriors(p,S = 1000, X = X, Y= Y, priors.emp)
+
+```
+
+### Basic Model Estimation
 ```{R}
 #IRFs
 A.posterior <- posteriors.emp.wa$A.posterior
@@ -917,13 +1113,87 @@ for (n in 1:N){
 
 
 ```
+### Extended Model Estimation
+```{R}
+#IRFs
+A.posterior <- posteriors.emp.wa.ext$A.posterior
+B.posterior <- posteriors.emp.wa.ext$B.posterior
+
+
+
+
+S = 1000
+N = ncol(Y)
+IRF.posterior     = array(NA,c(N,N,h+1,S))
+IRF.inf.posterior = array(NA,c(N,N,S))
+FEVD.posterior    = array(NA,c(N,N,h+1,S))
+J                 = cbind(diag(N),matrix(0,N,N*(p-1)))
+
+for (s in 1:S){
+  A.bold          = rbind(t(A.posterior[2:(1+N*p),,s]),cbind(diag(N*(p-1)),matrix(0,N*(p-1),N)))
+  IRF.inf.posterior[,,s]          = J %*% solve(diag(N*p)-A.bold) %*% t(J) %*% B.posterior[,,s]
+  
+  A.bold.power    = A.bold
+  for (i in 1:(h+1)){
+    if (i==1){
+      IRF.posterior[,,i,s]        = B.posterior[,,s]
+    } else {
+      IRF.posterior[,,i,s]        = J %*% A.bold.power %*% t(J) %*% B.posterior[,,s]
+      A.bold.power                = A.bold.power %*% A.bold
+    }
+    for (n in 1:N){
+      for (nn in 1:N){
+        FEVD.posterior[n,nn,i,s]  = sum(IRF.posterior[n,nn,1:i,s]^2)
+      }
+    }
+    FEVD.posterior[,,i,s]         = diag(1/apply(FEVD.posterior[,,i,s],1,sum))%*%FEVD.posterior[,,i,s]
+  }
+}
+FEVD.posterior    = 100*FEVD.posterior
+
+
+# save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k002.RData")
+save(IRF.posterior,IRF.inf.posterior, FEVD.posterior, file="irf-fevd-k1.RData")
+load("irf-fevd-k1.RData")
+
+
+
+IRFs.k1           = apply(IRF.posterior[,3,,],1:2,mean)
+IRFs.inf.k1       = apply(IRF.inf.posterior[,3,],1,mean)
+rownames(IRFs.k1) = colnames(Y)
+rownames(IRFs.k1)[5] = "Unemployment Rate: Western Australia"
+
+IRFs.k1.hdi    = apply(IRF.posterior[,3,,],1:2,hdi, credMass=0.68)
+
+
+
+par(mfrow=c(3,2), mar=c(4,4.5,2,2),cex.axis=1.5, cex.lab=1.5)
+for (n in 1:N){
+  ylims     = range(IRFs.k1[n,hh],IRFs.k1.hdi[,n,hh])
+  plot(hh,IRFs.k1[n,hh], type="l", ylim=ylims, axes=FALSE, xlab="", ylab=rownames(IRFs.k1)[n])
+  
+    axis(1, at = c(12), labels = c("2.5year"))
+  axis(2,c(ylims[1],0,ylims[2]),round(c(ylims[1],0,ylims[2]),3))
+  polygon(c(hh,(h+1):1), c(IRFs.k1.hdi[1,n,hh],IRFs.k1.hdi[2,n,(h+1):1]), col=mcxs1.shade1,border=mcxs1.shade1)
+  abline(h=0)
+  lines(hh, IRFs.k1[n,hh],lwd=2,col=mcxs1)
+}
+
+
+
+
+
+
+```
+
+
 ### Intepretations
 
-Each of the impulse response functions show how variables react to a shock to Log real GDP. There are four different systems, one for each of the key Australian states.
+Each of the impulse response functions show how variables react to a shock to the cash rate target. There are eight different systems, a basic and extended model for each of the key Australian states. There are no noticeable differences in the shapes or characteristics of the IRFs between the basic and extended models in any of the states. 
 
-The goal of this paper is to find how different states react to changes in monetary policy, unfortunately I do not yield any results that are statistically different from zero, other than the effect of a shock to GDP on itself.
+The goal of this paper is to find how different states react to changes in monetary policy. Interestingly, the effect of a positive shock to the cash rate target appears lead to a short term drop unemployment levels in every state with the impact decreasing over time. The magnitude of the effect on unemployment is most obvious difference between states. In Western Australia a shock to the cash rate drops unemployment by 0.1068 initially which slowly increases back to its initial value, however not reaching it within 5 years. In New South Wales, the drop is much greater, at 0.1405, while Victoria's drop is only 0.0657, and Queensland's is 0.0899. There are clear differences between each state, with a monetary policy shock affecting New South Wales the most and Victoria the least. This is highly unexpected and likely means there are issues with the estimation strategy.
 
-Looking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the impact of real GDP on unemployment levels is lowest in New South Wales. However, as stated earlier, the results are not statistically different from zero.  
+
 
 
 
