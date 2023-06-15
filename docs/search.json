@@ -46,14 +46,21 @@
     "href": "index.html#new-south-wales",
     "title": "Examining the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "New South Wales",
-    "text": "New South Wales\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation\n\n\n\n\n\n##Victoria\n\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation"
+    "text": "New South Wales\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation"
+  },
+  {
+    "objectID": "index.html#victoria",
+    "href": "index.html#victoria",
+    "title": "Examining the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "section": "Victoria",
+    "text": "Victoria\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation"
   },
   {
     "objectID": "index.html#western-australia",
     "href": "index.html#western-australia",
     "title": "Examining the Effects of Monetary Policy on Regional Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Western Australia",
-    "text": "Western Australia\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation\n\n\n\n\n\n\n\nIntepretations\nEach of the impulse response functions show how variables react to a shock to Log real GDP. There are four different systems, one for each of the key Australian states.\nThe goal of this paper is to find how different states react to changes in monetary policy, unfortunately I do not yield any results that are statistically different from zero, other than the effect of a shock to GDP on itself.\nLooking at the point estimates, we can see that the greatest impact on unemployment levels is in Victoria while the impact of real GDP on unemployment levels is lowest in New South Wales. However, as stated earlier, the results are not statistically different from zero."
+    "text": "Western Australia\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation\n\n\n\n\n\n\n\nIntepretations\nEach of the impulse response functions show how variables react to a shock to the cash rate target. There are eight different systems, a basic and extended model for each of the key Australian states. There are no noticeable differences in the shapes or characteristics of the IRFs between the basic and extended models in any of the states.\nThe goal of this paper is to find how different states react to changes in monetary policy. Interestingly, the effect of a positive shock to the cash rate target appears lead to a short term drop unemployment levels in every state with the impact decreasing over time. The magnitude of the effect on unemployment is most obvious difference between states. In Western Australia a shock to the cash rate drops unemployment by 0.1068 initially which slowly increases back to its initial value, however not reaching it within 5 years. In New South Wales, the drop is much greater, at 0.1405, while Victoria’s drop is only 0.0657, and Queensland’s is 0.0899. There are clear differences between each state, with a monetary policy shock affecting New South Wales the most and Victoria the least. This is highly unexpected and likely means there are issues with the estimation strategy."
   },
   {
     "objectID": "index.html#references",
