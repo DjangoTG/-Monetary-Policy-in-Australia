@@ -1,5 +1,5 @@
 ---
-title: "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis"
+title: "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis"
 author: "Django Trueman-Greinke"
 
 execute:
