@@ -2,77 +2,70 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "",
     "text": "Abstract. Using data from the Australian Bureau of Statistics, this paper attempts to understand how changes in monetary policy impact unemployment levels in different Australian states using a Structural Vector Autoregression (SVAR) approach."
   },
   {
     "objectID": "index.html#acf-and-pacf-plots",
     "href": "index.html#acf-and-pacf-plots",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "ACF and PACF plots",
     "text": "ACF and PACF plots\nBelow are the ACF and PACF plots for each of the variables. These show the memory properties of the data. Each pair of plots have similar shapes with the ACFs showing a strong positive, gradually decaying pattern, while the PACFs are all insignificant after the first lag. This suggests that many or all of the variables are likely to follow a random walk with drift process."
   },
   {
     "objectID": "index.html#integration-order-verification",
     "href": "index.html#integration-order-verification",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Integration Order Verification",
     "text": "Integration Order Verification\nDickey-Fuller tests were run on each of the variables to determine the integration order, results are below. All of the variables have a single unit-root except for the Cash Rate Target. This matches the interpretation from the ACF and PACF plots."
   },
   {
     "objectID": "index.html#basic-model",
     "href": "index.html#basic-model",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Basic Model",
     "text": "Basic Model\nPresenting the likelihood function as a normal-inverse Wishart distribution for \\((A,\\Sigma)\\) using matrix notation, we have:\n\\[\\begin{gather}\nY = XA + E \\\\\n\\\\ E|X \\sim MN_{T \\times N}(0_{T \\times N},\\Sigma,I_T)\n\\end{gather}\\]\n\\[\\begin{gather}\nL(A,\\Sigma|Y,X) \\propto det(\\Sigma)^{-\\frac{T}{2}} exp \\left\\{-\\frac{1}{2} tr \\left[ \\Sigma^{-1}(Y-XA)'(Y-XA) \\right] \\right\\} \\\\\n\\\\ = det(\\Sigma)^{-\\frac{T}{2}} exp \\left\\{-\\frac{1}{2} tr \\left[ \\Sigma^{-1}(A-\\hat{A})'X'X(A-\\hat{A}) \\right] \\right\\} exp \\left\\{-\\frac{1}{2} tr \\left[\\Sigma^{-1}(Y-X \\hat{A})'(Y-X \\hat{A}) \\right] \\right\\} \\\\\n\\end{gather}\\]\nwhere:\n\\[Y_t=\\begin{pmatrix}  GDP_t &= \\text{Real GDP}\n\\\\ CPI_t  &= \\text{Consumer Price Index}\n\\\\ CRT_p  &= \\text{Cash Rate Target GDP}\n\\\\ M1_t  &= \\text{Money Supply}\n\\\\ UR_t  &= \\text{State Specific Unemployment Rate}\n\\end{pmatrix}\\]\n\\[\\begin{gather}\n\\hat{A} = (X'X)^{-1}X'Y\n\\end{gather}\\]\nHence:\n\\[\\begin{gather}\nL(A,\\Sigma|Y,X) = NIW_{K\\times N}(\\hat{A}, (X'X)^{-1},(Y-X\\hat{A})'(Y-X\\hat{A}), T-N-K)\n\\end{gather}\\]\nThis leads to joint prior distribution for \\((A, \\Sigma)\\) of the same form:\n\\[\\begin{gather}\n\np(A,\\Sigma) = p(A|\\Sigma) p(\\Sigma) \\\\\nA|\\Sigma \\sim MN_{K \\times N} (\\underline{A}, \\Sigma , \\underline{V}) \\\\\n\\Sigma \\sim IW_{N}(\\underline{S},\\underline{\\nu})\n\\end{gather}\\]\nThe full conditional posterior is, therefore, given by:\n\\[\\begin{gather}\np(A,\\Sigma |Y, X) = p(A|Y, X, \\Sigma) p(\\Sigma|Y,X) \\\\\np(A|Y,X,\\Sigma) = MN_{K \\times N} (\\bar{A}, \\Sigma , \\bar{V}) \\\\\np(\\Sigma|Y, X) = IW_{N}(\\bar{S},\\bar{\\nu})\n\\end{gather}\\]\nwith parameters:\n\\[\\begin{gather}\n\\bar{V} = (X^{'}X+ \\underline{V}^{-1})^{-1} \\\\\n\\\\ \\bar{A} = \\bar{V}(X^{'}Y+\\underline{V}^{-1} \\underline{A}) \\\\\n\\\\ \\bar{\\nu} = T + \\underline{\\nu} \\\\\n\\\\ \\bar{S} = \\underline{S} + Y^{'}Y +  \\underline{A}^{'}\\underline{V}^{-1}\\underline{A} - \\bar{A}^{'}\\bar{V}^{-1}\\bar{A}\n\\end{gather}\\]\nThe following function uses the Minnesota prior to set priors for \\(V\\), \\(A\\), \\(\\nu,\\) and \\(S\\)\n\ncalc.priors &lt;- function(p, X, Y){\n  \n  \n  \n  A.hat = solve(t(X)%*%X)%*%(t(X)%*%Y)\n  Sigma.hat = diag(ncol(Y))\n  N = ncol(Y)\n    \n  #Setting Kappas\n  kappa.1 &lt;- 0.02^2\n  kappa.2 &lt;-100\n  \n  K = 1 + (p*N)\n  \n  \n  A.prior     = matrix(0,nrow(A.hat),ncol(A.hat))\n  A.prior[2:(N+1),] = diag(N)\n  V.prior     = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))\n  S.prior     = diag(diag(Sigma.hat))\n  nu.prior    = N+1\n  \n  priors &lt;- list(A.prior = A.prior , V.prior=V.prior, S.prior=S.prior, nu.prior=nu.prior)\n  \n  return(priors)\n}\n\nUsing these priors and the function below, we can calculate posteriors \\(A\\), \\(B\\), and \\(\\Sigma\\)\n\ncalc.posteriors &lt;- function (p, S, X, Y, priors){\n  \n  N = ncol(Y)\n  A.prior &lt;- priors$A.prior\n  V.prior &lt;- priors$V.prior\n  S.prior &lt;- priors$S.prior\n  nu.prior &lt;- priors$nu.prior\n  \n  V.bar.inv   = (t(X)%*%X) + diag(1/diag(V.prior))\n  V.bar       = solve(V.bar.inv)\n  \n  A.bar       = V.bar%*%(t(X)%*%Y + diag(1/diag(V.prior))%*%A.prior)\n  nu.bar      = nrow(Y) + nu.prior\n  \n  S.bar       = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar\n  S.bar.inv   = solve(S.bar)\n \n \n  \n  Sigma.posterior.inv   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)\n  Sigma.posterior   = apply(Sigma.posterior.inv,3,solve)\n  Sigma.posterior   = array(Sigma.posterior,c(N,N,S))\n  A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))\n  L                 = t(chol(V.bar))\n  B.posterior = array(NA, c(N,N,S))\n  B1.posterior = array(NA,c(N,(1+N*p),S))\n  \n\n\n  for (s in 1:S){\n    chol.sigma = chol(Sigma.posterior[,,s])\n    A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol.sigma\n    B.posterior[,,s]= t(chol.sigma)\n    B1.posterior[,,s]= B.posterior[,,s]%*%t(A.posterior[,,s])\n  }\n  \n  posterior = list(A.posterior = A.posterior, B.posterior = B.posterior, Sigma.posterior = Sigma.posterior, B1.posterior = B1.posterior)\n  \n  return(posterior)\n}"
   },
   {
     "objectID": "index.html#extended-model-formulation",
     "href": "index.html#extended-model-formulation",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Extended model formulation",
     "text": "Extended model formulation\nTo extend the model I augment the system using the ‘sum of coefficients’ and ‘dummy initial observation’ prior. The sum of coefficients prior takes the average of the lagged values and adds them to the basic equation. This is because these values are assumed to be a good forecast of future observations.\nThe ‘dummy initial observation’ prior adds a single dummy observation such that all values are set equal to the averages of initial conditions, up to a scaling factor.\nIn order to practically generate the additional rows the following steps should be taken.\nFirstly the average of lagged values needs to be calculated, \\(y.bar\\). This is done by finding the mean of the first \\(p\\) values in the data. Next, values of of the scaling factors need to be selected, typically, as I have done, values equal to 1 are chosen.\nOnce this has been done, the rows can be created. The fine details of how this is done can be found in Carriero and Clark (2013).\n\nprior.ex &lt;- function(data, p, lambda_3 = 1, lambda_4 = 1){\n  \n  N = ncol(data)\n  M = (N*p)+1\n  \n  in.obvs.Y &lt;- matrix(data[1:p,], ncol = N)\n  y.bar     = colMeans(in.obvs.Y)\n    \n  Y_star    = rbind(diag(y.bar)/lambda_3, y.bar/lambda_4)\n  X_star    = as.matrix(c(rep(0, N), 1/lambda_4))\n  for (i in 1:p) {\n    X_star  = cbind(Y_star, X_star)\n  }\n  \n  ext.data &lt;- list(YN = Y_star, XN = X_star)\n  \n  return(ext.data)\n  \n}"
   },
   {
     "objectID": "index.html#queensland",
     "href": "index.html#queensland",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Queensland",
     "text": "Queensland\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation"
   },
   {
     "objectID": "index.html#new-south-wales",
     "href": "index.html#new-south-wales",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "New South Wales",
     "text": "New South Wales\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation"
   },
   {
     "objectID": "index.html#victoria",
     "href": "index.html#victoria",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Victoria",
     "text": "Victoria\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation"
   },
   {
     "objectID": "index.html#western-australia",
     "href": "index.html#western-australia",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "Western Australia",
     "text": "Western Australia\n\nBasic Model Estimation\n\n\n\n\n\n\n\nExtended Model Estimation\n\n\n\n\n\n\n\nIntepretations\nEach of the impulse response functions show how variables react to a shock to the cash rate target. There are eight different systems, a basic and extended model for each of the key Australian states. There are no noticeable differences in the shapes or characteristics of the IRFs between the basic and extended models in any of the states.\nThe goal of this paper is to find how different states react to changes in monetary policy. Interestingly, the effect of a positive shock to the cash rate target appears lead to a short term drop unemployment levels in every state with the impact decreasing over time. The magnitude of the effect on unemployment is most obvious difference between states. In Western Australia a shock to the cash rate drops unemployment by 0.1068 initially which slowly increases back to its initial value, however not reaching it within 5 years. In New South Wales, the drop is much greater, at 0.1405, while Victoria’s drop is only 0.0657, and Queensland’s is 0.0899. There are clear differences between each state, with a monetary policy shock affecting New South Wales the most and Victoria the least. This is highly unexpected and likely means there are issues with the estimation strategy."
   },
   {
-    "objectID": "index.html#stochastic-volatility-model-using-gibbs-sampler",
-    "href": "index.html#stochastic-volatility-model-using-gibbs-sampler",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
-    "section": "Stochastic Volatility model using Gibbs sampler",
-    "text": "Stochastic Volatility model using Gibbs sampler\n\\[\\begin{align}\n\nY = X \\beta +E\n\\\\ E|X \\sim N(0_T, diag(\\sigma^2))\n\\\\ \\sigma^2 = (exp({h_1}),..., exp({h_T}))\n\\\\ h_t \\text{ - follows a Stochastic Volatility process}\n\\\\ \\beta \\sim N(\\underline\\beta, \\underline V_\\beta)\n\n\\end{align}\\]\n\n##Gibbs\nSVcommon.Gibbs.iteration = function(S, aux, priors){\n  \n  posteriors    = list(\n    H           = matrix(NA,T,S),\n    s           = matrix(NA,T,S),\n    h0          = rep(NA,S),\n    sigma.v2    = rep(NA,S)\n  )\n  \n  # A single iteration of the Gibbs sampler for the SV component\n  #\n  # aux is a list containing:\n  #   Y - a TxN matrix\n  #   X - a TxK matrix\n  #   H - a Tx1 matrix\n  #   h0 - a scalar\n  #   sigma.v2 - a scalar\n  #   s - a Tx1 matrix\n  #   A - a KxN matrix\n  #   Sigma - an NxN matrix\n  #   sigma2 - a Tx1 matrix\n  #\n  # priors is a list containing:\n  #   h0.v - a positive scalar\n  #   h0.m - a scalar\n  #   sigmav.s - a positive scalar\n  #   sigmav.nu - a positive scalar\n  #   HH - a TxT matrix\n  \n  T             = dim(aux$Y)[1]\n  N             = dim(aux$Y)[2]\n  alpha.st      = c(1.92677,1.34744,0.73504,0.02266,0-0.85173,-1.97278,-3.46788,-5.55246,-8.68384,-14.65000)\n  sigma.st      = c(0.11265,0.17788,0.26768,0.40611,0.62699,0.98583,1.57469,2.54498,4.16591,7.33342)\n  pi.st         = c(0.00609,0.04775,0.13057,0.20674,0.22715,0.18842,0.12047,0.05591,0.01575,0.00115)\n  \n  Lambda        = solve(chol(aux$Sigma))\n  Z             = rowSums( ( aux$Y - aux$X %*% aux$A ) %*% Lambda ) / sqrt(N)\n  Y.tilde       = as.vector(log((Z + 0.0000001)^2))\n  Ytilde.alpha  = as.matrix(Y.tilde - alpha.st[as.vector(aux$s)])\n  \n  # sampling initial condition\n  ############################################################\n  V.h0.bar      = 1/((1 / priors$h0.v) + (1 / aux$sigma.v2))\n  m.h0.bar      = V.h0.bar*((priors$h0.m / priors$h0.v) + (aux$H[1] / aux$sigma.v2))\n  h0.draw       = rnorm(1, mean = m.h0.bar, sd = sqrt(V.h0.bar))\n  aux$h0        = h0.draw\n  \n  # sampling sigma.v2\n  ############################################################\n  sigma.v2.s    = priors$sigmav.s + sum(c(aux$H[1] - aux$h0, diff(aux$H))^2)\n  sigma.v2.draw = sigma.v2.s / rchisq(1, priors$sigmav.nu + T)\n  aux$sigma.v2  = sigma.v2.draw\n  \n  # sampling auxiliary states\n  ############################################################\n  Pr.tmp        = simplify2array(lapply(1:10,function(x){\n    dnorm(Y.tilde, mean = as.vector(aux$H + alpha.st[x]), sd = sqrt(sigma.st[x]), log = TRUE) + log(pi.st[x])\n  }))\n  Pr            = t(apply(Pr.tmp, 1, function(x){exp(x - max(x)) / sum(exp(x - max(x)))}))\n  s.cum         = t(apply(Pr, 1, cumsum))\n  r             = matrix(rep(runif(T), 10), ncol = 10)\n  ss            = apply(s.cum &lt; r, 1, sum) + 1\n  aux$s         = as.matrix(ss)\n  \n  \n  # sampling log-volatilities using functions for tridiagonal precision matrix\n  ############################################################\n  Sigma.s.inv   = diag(1 / sigma.st[as.vector(aux$s)])\n  D.inv         = Sigma.s.inv + (1 / aux$sigma.v2) * priors$HH\n  b             = as.matrix(Ytilde.alpha / sigma.st[as.vector(aux$s)] + (aux$h0/aux$sigma.v2)*diag(T)[,1])\n  lead.diag     = diag(D.inv)\n  sub.diag      = mgcv::sdiag(D.inv, -1)\n  D.chol        = mgcv::trichol(ld = lead.diag, sd = sub.diag)\n  D.L           = diag(D.chol$ld)\n  mgcv::sdiag(D.L,-1) = D.chol$sd\n  x             = as.matrix(rnorm(T))\n  a             = forwardsolve(D.L, b)\n  draw          = backsolve(t(D.L), a + x)\n  aux$H         = as.matrix(draw)\n  aux$sigma2    = as.matrix(exp(draw))\n  \n   for (s in 1:S){\n     posteriors$H[,s]        = aux$H\n    posteriors$s[,s]        = aux$s\n    posteriors$h0[s]        = aux$h0\n    posteriors$sigma.v2[s]  = aux$sigma.v2\n   }\n  \n  return(posteriors)\n}"
-  },
-  {
     "objectID": "index.html#references",
     "href": "index.html#references",
-    "title": "Examining the Heterogeneours Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
+    "title": "Examining the Heterogeneous Effects of Monetary Policy on State-specific Unemployment in Australia: A Structural Vector Autoregression Analysis",
     "section": "References",
     "text": "References\nDoan, T., R. Litterman, and C. A. Sims (1984): “Forecasting and Conditional Projection Using Realistic Prior Distributions,” Econometric Reviews, 3, 1-100.\nCarriero, A., Clark, T. E., & Marcellino, M. (2015): “Bayesian VARs: Specification choices and forecast accuracy,” Journal of Applied Econometrics,30, 46-73."
   }
